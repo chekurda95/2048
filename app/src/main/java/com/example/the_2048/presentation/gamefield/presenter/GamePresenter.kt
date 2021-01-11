@@ -20,7 +20,7 @@ class GamePresenter: MvpPresenter<IGameFragment>(), IGamePresenter {
 
     override fun startNewGame() {
         game.startNewGame()
-        viewState.drawField(game.getField().getCellsStringList())
+        viewState.drawField(game.getField().getCellsValues())
     }
 
     override fun leftSwipe() {
@@ -30,7 +30,7 @@ class GamePresenter: MvpPresenter<IGameFragment>(), IGamePresenter {
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {viewState.animateField(game.getField().getMovedList())}
-            .subscribe{viewState.drawField(game.getField().getCellsStringList())})
+            .subscribe{viewState.drawField(game.getField().getCellsValues())})
     }
 
     override fun rightSwipe() {
@@ -40,7 +40,7 @@ class GamePresenter: MvpPresenter<IGameFragment>(), IGamePresenter {
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {viewState.animateField(game.getField().getMovedList())}
-            .subscribe{viewState.drawField(game.getField().getCellsStringList())})
+            .subscribe{viewState.drawField(game.getField().getCellsValues())})
 
     }
 
@@ -51,7 +51,7 @@ class GamePresenter: MvpPresenter<IGameFragment>(), IGamePresenter {
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {viewState.animateField(game.getField().getMovedList())}
-            .subscribe{viewState.drawField(game.getField().getCellsStringList())})
+            .subscribe{viewState.drawField(game.getField().getCellsValues())})
     }
 
     override fun downSwipe() {
@@ -61,7 +61,7 @@ class GamePresenter: MvpPresenter<IGameFragment>(), IGamePresenter {
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete {viewState.animateField(game.getField().getMovedList())}
-            .subscribe{viewState.drawField(game.getField().getCellsStringList())})
+            .subscribe{viewState.drawField(game.getField().getCellsValues())})
     }
 
     override fun onDestroy() {

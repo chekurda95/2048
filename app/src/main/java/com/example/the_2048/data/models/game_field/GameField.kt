@@ -24,15 +24,7 @@ class GameField: IGameField {
 
     override fun getCell(x: Int, y: Int) = cellsList[4*y + x]
 
-    override fun getCellsStringList(): List<String>{
-        val list = ArrayList<String>()
-        for(cell in cellsList){
-            with(cell) {
-                list.add(if (value != 0) value.toString() else "")
-            }
-        }
-        return list
-    }
+    override fun getCellsValues(): List<Int> = cellsList.map { it.value }
 
     override fun getMovedList() = movedList
 

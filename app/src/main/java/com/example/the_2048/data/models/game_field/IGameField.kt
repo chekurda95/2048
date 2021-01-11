@@ -6,7 +6,7 @@ interface IGameField{
 
     fun getCell(x: Int, y: Int): Cell
 
-    fun getCellsStringList(): List<String>
+    fun getCellsValues(): List<Int>
 
     fun getMovedList(): List<Int>
 

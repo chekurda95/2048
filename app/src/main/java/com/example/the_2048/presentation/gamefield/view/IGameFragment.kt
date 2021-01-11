@@ -7,7 +7,7 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 @StateStrategyType(OneExecutionStateStrategy::class)
 interface IGameFragment: MvpView{
 
-    fun drawField(listOfCellsValues: List<String>)
+    fun drawField(listOfCellsValues: List<Int>)
 
     fun animateField(movedList: List<Int>)
 }
