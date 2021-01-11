@@ -1,11 +1,11 @@
-package com.example.a2048.presentation.hostactivity.view
+package com.example.the_2048.presentation.main
 
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.example.a2048.R
-import com.example.a2048.presentation.gamefield.view.GameFragment
+import com.example.the_2048.presentation.gamefield.view.GameFragment
 
 class HostActivity : MvpAppCompatActivity() {
 

@@ -1,8 +1,8 @@
-package com.example.a2048.data.models.gamesfield
+package com.example.the_2048.data.models.game_field
 
-import com.example.a2048.data.models.cell.Cell
+import com.example.the_2048.data.models.cell.Cell
 
-class Field: IField {
+class GameField: IGameField {
     private var cellsList: List<Cell>
     private var movedList = ArrayList<Int>(16)
 

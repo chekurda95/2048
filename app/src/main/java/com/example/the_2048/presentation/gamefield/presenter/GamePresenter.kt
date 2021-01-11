@@ -1,9 +1,9 @@
-package com.example.a2048.presentation.gamefield.presenter
+package com.example.the_2048.presentation.gamefield.presenter
 
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
-import com.example.a2048.data.models.game.Game
-import com.example.a2048.presentation.gamefield.view.IGameFragment
+import com.example.the_2048.data.models.game.Game
+import com.example.the_2048.presentation.gamefield.view.IGameFragment
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 const val duration = 70L
 
 @InjectViewState
-class GamePresenter: MvpPresenter<IGameFragment>(), IGamePresenter{
+class GamePresenter: MvpPresenter<IGameFragment>(), IGamePresenter {
 
     private val game = Game()
     private val disposer = CompositeDisposable()

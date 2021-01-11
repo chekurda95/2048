@@ -1,4 +1,4 @@
-package com.example.a2048.presentation.gamefield.view
+package com.example.the_2048.presentation.gamefield.view
 
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy

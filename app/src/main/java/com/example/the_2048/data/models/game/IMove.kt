@@ -1,4 +1,4 @@
-package com.example.a2048.data.models.game
+package com.example.the_2048.data.models.game
 
 interface IMove{
 

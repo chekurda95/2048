@@ -1,12 +1,12 @@
-package com.example.a2048.data.models.game
+package com.example.the_2048.data.models.game
 
-import com.example.a2048.data.models.cell.Cell
-import com.example.a2048.data.models.gamesfield.Field
+import com.example.the_2048.data.models.cell.Cell
+import com.example.the_2048.data.models.game_field.GameField
 import java.util.*
 
 class Game : IGame, IMove {
 
-    private lateinit var field: Field
+    private lateinit var field: GameField
 
     companion object {
         var counter = 0
@@ -15,14 +15,14 @@ class Game : IGame, IMove {
     override fun getField() = field
 
     override fun startNewGame() {
-        field = Field()
+        field = GameField()
         field.addNewFolder()
     }
 
     override fun resumeGame() {
         //load List from base
         val list = ArrayList<Cell>()
-        field = Field(list)
+        field = GameField(list)
     }
 
     override fun gameIsOver() {

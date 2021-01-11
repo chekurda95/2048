@@ -1,4 +1,4 @@
-package com.example.a2048.presentation.gamefield.presenter
+package com.example.the_2048.presentation.gamefield.presenter
 
 interface IGamePresenter{
 

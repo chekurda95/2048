@@ -1,4 +1,4 @@
-package com.example.a2048.presentation.gamefield.view
+package com.example.the_2048.presentation.gamefield.view
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -14,7 +14,7 @@ import android.widget.TextView
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.a2048.R
-import com.example.a2048.presentation.gamefield.presenter.GamePresenter
+import com.example.the_2048.presentation.gamefield.presenter.GamePresenter
 import kotlinx.android.synthetic.main.fragment_field.*
 
 class GameFragment : MvpAppCompatFragment(), IGameFragment, View.OnTouchListener {
