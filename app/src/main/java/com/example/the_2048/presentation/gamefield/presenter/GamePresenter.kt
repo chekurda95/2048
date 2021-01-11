@@ -3,14 +3,16 @@ package com.example.the_2048.presentation.gamefield.presenter
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import com.example.the_2048.data.models.game.Game
+import com.example.the_2048.presentation.gamefield.delegates.SwipeDirection
+import com.example.the_2048.presentation.gamefield.delegates.SwipeDirection.*
 import com.example.the_2048.presentation.gamefield.view.IGameFragment
+import com.example.the_2048.utils.storeIn
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
-const val duration = 70L
+private const val duration = 70L
 
 @InjectViewState
 class GamePresenter: MvpPresenter<IGameFragment>(), IGamePresenter {
@@ -23,48 +25,29 @@ class GamePresenter: MvpPresenter<IGameFragment>(), IGamePresenter {
         viewState.drawField(game.getField().getCellsValues())
     }
 
-    override fun leftSwipe() {
-        disposer.add(Observable.interval(0, duration, TimeUnit.MILLISECONDS)
-            .take(4)
-            .doOnNext{game.leftSwipe()}
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnComplete {viewState.animateField(game.getField().getMovedList())}
-            .subscribe{viewState.drawField(game.getField().getCellsValues())})
+    override fun onSwipe(direction: SwipeDirection) {
+        val swipeAction = when (direction) {
+            UP    -> game::upSwipe
+            DOWN  -> game::downSwipe
+            LEFT  -> game::leftSwipe
+            RIGHT -> game::rightSwipe
+        }
+        performSwipeAction(swipeAction)
     }
 
-    override fun rightSwipe() {
-        disposer.add(Observable.interval(0, duration, TimeUnit.MILLISECONDS)
+    private fun performSwipeAction(swipeAction: SwipeAction) {
+        Observable.interval(0, duration, TimeUnit.MILLISECONDS)
             .take(4)
-            .doOnNext{game.rightSwipe()}
-            .subscribeOn(Schedulers.computation())
+            .doOnNext { swipeAction.invoke() }
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnComplete {viewState.animateField(game.getField().getMovedList())}
-            .subscribe{viewState.drawField(game.getField().getCellsValues())})
-
-    }
-
-    override fun upSwipe() {
-        disposer.add(Observable.interval(0, duration, TimeUnit.MILLISECONDS)
-            .take(4)
-            .doOnNext{game.upSwipe()}
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnComplete {viewState.animateField(game.getField().getMovedList())}
-            .subscribe{viewState.drawField(game.getField().getCellsValues())})
-    }
-
-    override fun downSwipe() {
-        disposer.add(Observable.interval(0, duration, TimeUnit.MILLISECONDS)
-            .take(4)
-            .doOnNext{game.downSwipe()}
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnComplete {viewState.animateField(game.getField().getMovedList())}
-            .subscribe{viewState.drawField(game.getField().getCellsValues())})
+            .doOnComplete { viewState.animateField(game.getField().getMovedList()) }
+            .subscribe { viewState.drawField(game.getField().getCellsValues()) }
+            .storeIn(disposer)
     }
 
     override fun onDestroy() {
         disposer.dispose()
     }
 }
+
+private typealias SwipeAction = () -> Unit

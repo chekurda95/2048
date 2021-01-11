@@ -40,22 +40,22 @@ class GameField: IGameField {
             }
 
         }
-        if(emptyCells.size!=0) {
+        if (emptyCells.size!=0) {
             val randomPoint = ((Math.random() * 100).toInt() % emptyCells.size)
             emptyCells[randomPoint].value = ((Math.random() * 100).toInt() % 2 + 1)*2
         }
     }
 
-    fun swipeOrMoveCells(firstCell: Cell, secondCell: Cell){
-        if(firstCell.value == 0 && secondCell.value != 0){
+    fun swipeOrMoveCells(firstCell: Cell, secondCell: Cell) {
+        if (firstCell.value == 0 && secondCell.value != 0) {
             firstCell.value = secondCell.value
             secondCell.value = 0
-            if(secondCell.isSum){
+            if (secondCell.isSum) {
                 firstCell.isSum = true
                 secondCell.isSum = false
             }
             isMoved = true
-        } else if(firstCell.value != 0 && firstCell.value == secondCell.value && !secondCell.isSum && !firstCell.isSum){
+        } else if (firstCell.value != 0 && firstCell.value == secondCell.value && !secondCell.isSum && !firstCell.isSum) {
             firstCell.isSum = true
             firstCell.value *= 2
             secondCell.value = 0

@@ -5,13 +5,12 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.support.v7.widget.AppCompatTextView
 import android.util.AttributeSet
-import com.example.a2048.R
 import com.example.the_2048.utils.StringUtils
 
 class CellView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = R.style.OneCube
+    defStyleAttr: Int = 0
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
 
     fun setValue(value: Int) {

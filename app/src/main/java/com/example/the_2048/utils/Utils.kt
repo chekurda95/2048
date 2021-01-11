@@ -1,4 +1,8 @@
 package com.example.the_2048.utils
 
-class Utils {
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+
+fun Disposable.storeIn(disposer: CompositeDisposable) {
+    disposer.add(this)
 }

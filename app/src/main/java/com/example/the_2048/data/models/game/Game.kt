@@ -9,7 +9,7 @@ class Game : IGame, IMove {
     private lateinit var field: GameField
 
     companion object {
-        var counter = 0
+        @Volatile var moveStep = 0
     }
 
     override fun getField() = field
@@ -20,7 +20,7 @@ class Game : IGame, IMove {
     }
 
     override fun resumeGame() {
-        //load List from base
+        //load List from DataBase
         val list = ArrayList<Cell>()
         field = GameField(list)
     }
@@ -78,13 +78,13 @@ class Game : IGame, IMove {
     }
 
     private fun checkCounter(){
-        counter++
-        if (counter == 4 && field.isMoved) {
-            counter = 0
+        moveStep++
+        if (moveStep == 4 && field.isMoved) {
+            moveStep = 0
             field.isMoved = false
             field.addNewFolder()
-        } else if(counter == 4){
-            counter = 0
+        } else if(moveStep == 4){
+            moveStep = 0
             field.getMovedList().clear()
         }
     }

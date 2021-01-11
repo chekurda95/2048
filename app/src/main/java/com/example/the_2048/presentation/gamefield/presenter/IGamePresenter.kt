@@ -1,15 +1,8 @@
 package com.example.the_2048.presentation.gamefield.presenter
 
-interface IGamePresenter{
+import com.example.the_2048.presentation.gamefield.delegates.SwipeListener
+
+interface IGamePresenter : SwipeListener {
 
     fun startNewGame()
-
-    fun leftSwipe()
-
-    fun rightSwipe()
-
-    fun upSwipe()
-
-    fun downSwipe()
-
 }
