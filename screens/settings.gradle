@@ -1,0 +1,2 @@
+include ':game'
+project(':game').projectDir = new File(settingsDir, "$screens_dir/game")

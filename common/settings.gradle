@@ -1,0 +1,2 @@
+include ':settings_plugin'
+project(':settings_plugin').projectDir = new File(settingsDir, "$common_dir/settings_plugin")
