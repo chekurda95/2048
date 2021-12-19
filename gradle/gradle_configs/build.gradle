@@ -1,4 +1,4 @@
-group = "com.chekurda.gradle"
+group = "com.chekurda.2048.gradle"
 apply from: "project_params.gradle"
 
 allprojects {

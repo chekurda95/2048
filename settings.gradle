@@ -1,7 +1,7 @@
+includeBuild("gradle/gradle_configs")
 include ':app'
 
 ext.common_dir = 'common'
-includeBuild("$common_dir/gradle_configs")
 apply from: "$common_dir/settings.gradle"
 
 ext.design_dir = 'design'

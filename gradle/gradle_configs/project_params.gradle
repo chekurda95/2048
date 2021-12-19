@@ -54,7 +54,7 @@ ext.addRepos = this.&addRepos
 def addBaseBuildScriptDependency(DependencyHandler dependencyHandler) {
     dependencyHandler.classpath deps.android_gradle_plugin
     dependencyHandler.classpath deps.kotlin.plugin
-    dependencyHandler.classpath "com.chekurda.gradle:gradle_configs"
+    dependencyHandler.classpath "com.chekurda.2048.gradle:gradle_configs"
 }
 ext.addBaseBuildScriptDependency = this.&addBaseBuildScriptDependency
 
