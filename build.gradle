@@ -1,28 +1,16 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    apply from: "project_params.gradle"
-    ext {
-        kotlin_version = '1.4.21'
-    }
+    apply from: "common/gradle_configs/project_params.gradle"
 
-    ext.kotlinVersion = versions.kotlin
-
-    repositories {
-        google()
-        mavenCentral()
-    }
+    addRepos(repositories)
     dependencies { handler ->
         addBaseBuildScriptDependency(handler)
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+    addRepos(repositories)
 }
 
 task clean(type: Delete) {
