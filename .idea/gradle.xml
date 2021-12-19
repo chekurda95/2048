@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/custom_view_tools" />
             <option value="$PROJECT_DIR$/design" />
+            <option value="$PROJECT_DIR$/game" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -1,3 +1,4 @@
 include ':app'
 include ':design'
 include ':custom_view_tools'
+include ':game'

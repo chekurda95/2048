@@ -36,6 +36,7 @@ android {
 dependencies {
     implementation project(':design')
     implementation project(':custom_view_tools')
+    implementation project(':game')
 
     //Dagger2
     implementation "com.google.dagger:dagger:$rootProject.ext.daggerVersion"
