@@ -26,22 +26,22 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_0"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_1"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_2"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_3"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
@@ -52,22 +52,22 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_4"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_5"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_6"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_7"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
@@ -78,22 +78,22 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_8"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_9"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_10"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_11"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
@@ -104,22 +104,22 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_12"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_13"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_14"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>
 
-            <com.example.the_2048.presentation.views.cell.CellView
+            <com.chekurda.game_2048.presentation.views.cell.CellView
                     android:id="@+id/cell_15"
                     style="@style/OneCube"
                     android:layout_margin="3dp"/>

@@ -4,5 +4,4 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:id="@+id/fragment_container"
-             tools:context="com.example.the_2048.presentation.main.HostActivity">
-</FrameLayout>
+             tools:context="com.chekurda.game_2048.presentation.main.MainActivity"/>
