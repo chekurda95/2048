@@ -2,6 +2,9 @@
 
 buildscript {
     apply from: "project_params.gradle"
+    ext {
+        kotlin_version = '1.4.21'
+    }
 
     ext.kotlinVersion = versions.kotlin
 
@@ -11,6 +14,7 @@ buildscript {
     }
     dependencies { handler ->
         addBaseBuildScriptDependency(handler)
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 

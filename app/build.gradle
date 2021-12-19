@@ -22,6 +22,9 @@ android {
         sourceCompatibility rootProject.ext.javaVersion
         targetCompatibility rootProject.ext.javaVersion
     }
+    kotlinOptions {
+        jvmTarget = rootProject.ext.javaVersion
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -31,18 +34,8 @@ android {
 }
 
 dependencies {
-    implementation "com.google.android.material:material:$rootProject.ext.materialVersion"
-    implementation "com.jakewharton.rxbinding2:rxbinding:$rootProject.ext.rxBindingVersion"
-    implementation "org.apache.commons:commons-lang3:$rootProject.ext.apacheCommonsVersion"
-
-    // AndroidX
-    implementation "androidx.core:core-ktx:1.0.0"
-    implementation "androidx.appcompat:appcompat:$rootProject.ext.appCompatVersion"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.ext.androidLifecycleViewmodel"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$androidArchLifecycle"
-    implementation "androidx.legacy:legacy-preference-v14:$rootProject.ext.androidSupportVersion"
-    implementation "androidx.recyclerview:recyclerview:$rootProject.ext.recyclerViewVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$rootProject.ext.constraintLayoutVersion"
+    implementation project(':design')
+    implementation project(':custom_view_tools')
 
     //Dagger2
     implementation "com.google.dagger:dagger:$rootProject.ext.daggerVersion"

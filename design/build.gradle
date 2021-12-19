@@ -1,0 +1,42 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    api "com.google.android.material:material:$rootProject.ext.materialVersion"
+    api "com.jakewharton.rxbinding2:rxbinding:$rootProject.ext.rxBindingVersion"
+    api "org.apache.commons:commons-lang3:$rootProject.ext.apacheCommonsVersion"
+
+    api "androidx.core:core-ktx:$rootProject.ext.androidCore"
+    api "androidx.appcompat:appcompat:$rootProject.ext.appCompatVersion"
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.ext.androidLifecycleViewmodel"
+    api "androidx.lifecycle:lifecycle-livedata-ktx:$androidArchLifecycle"
+    api "androidx.legacy:legacy-preference-v14:$rootProject.ext.androidSupportVersion"
+    api "androidx.recyclerview:recyclerview:$rootProject.ext.recyclerViewVersion"
+    api "androidx.constraintlayout:constraintlayout:$rootProject.ext.constraintLayoutVersion"
+}
