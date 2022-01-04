@@ -8,6 +8,7 @@ class SdkCfgPlugin implements Plugin<Project> {
         project.dependencies {
             api "com.google.android.material:material:$project.rootProject.ext.materialVersion"
             api "com.jakewharton.rxbinding2:rxbinding:$project.rootProject.ext.rxBindingVersion"
+            api "androidx.annotation:annotation:$project.rootProject.ext.annotationVersion"
             api "org.apache.commons:commons-lang3:$project.rootProject.ext.apacheCommonsVersion"
 
             api "androidx.core:core-ktx:$project.rootProject.ext.androidCore"

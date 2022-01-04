@@ -6,7 +6,6 @@ import org.gradle.api.Project
 class KotlinCfgPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.apply plugin: 'kotlin-android'
-        project.apply plugin: 'kotlin-android-extensions'
         project.apply plugin: 'kotlin-kapt'
 
         project.dependencies {

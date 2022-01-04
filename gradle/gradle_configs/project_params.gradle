@@ -44,6 +44,8 @@ project.ext {
 
     apacheCommonsVersion = '3.9'
 
+    timberVersion = '4.7.1'
+
     //tests
     junitVersion = "4.13.2"
     mockitoVersion = "3.5.10"

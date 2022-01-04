@@ -19,16 +19,14 @@ class BaseModuleCfgPlugin implements Plugin<Project> {
                 versionName project.rootProject.ext.versionName
             }
 
+            def compatibility = project.rootProject.ext.javaVersion
             compileOptions {
-                def compatibility = project.rootProject.ext.javaVersion
                 sourceCompatibility compatibility
                 targetCompatibility compatibility
             }
-            def pluginContainer = project.getPlugins()
-
-            if (pluginContainer.hasPlugin('kotlin-android')) {
+            if (project.getPlugins().hasPlugin('kotlin-android')) {
                 kotlinOptions {
-                    jvmTarget = project.rootProject.ext.javaVersion
+                    jvmTarget = compatibility
                 }
             }
             buildTypes {
