@@ -1,6 +1,7 @@
 package com.chekurda.gradle
 
 import com.chekurda.gradle.root_config.ApplicationCfgPlugin
+import com.chekurda.gradle.sub_config.DataBindingCfgPlugin
 import com.chekurda.gradle.sub_config.ModuleCfgPlugin
 import com.chekurda.gradle.sub_config.DaggerCfgPlugin
 import com.chekurda.gradle.sub_config.KotlinCfgPlugin
@@ -55,6 +56,10 @@ class GradleCfgPlugin implements Plugin<Project> {
 
         void enableDaggerCfg() {
             project.getPlugins().apply(DaggerCfgPlugin.class)
+        }
+
+        void enableDataBindingCfg() {
+            project.getPlugins().apply(DataBindingCfgPlugin.class)
         }
     }
 }
