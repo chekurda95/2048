@@ -8,6 +8,5 @@ gradleConfig { cfg ->
 
 dependencies {
     implementation project(':design')
-    implementation project(':custom_view_tools')
     implementation project(':game')
 }
