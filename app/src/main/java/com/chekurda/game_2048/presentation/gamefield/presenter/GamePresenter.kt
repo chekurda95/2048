@@ -5,7 +5,7 @@ import com.chekurda.game_2048.data.models.game.Game
 import com.chekurda.game_2048.presentation.gamefield.delegates.SwipeDirection
 import com.chekurda.game_2048.presentation.gamefield.delegates.SwipeDirection.*
 import com.chekurda.game_2048.presentation.gamefield.view.IGameFragment
-import com.chekurda.game_2048.utils.storeIn
+import com.chekurda.common.storeIn
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

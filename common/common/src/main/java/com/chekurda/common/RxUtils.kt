@@ -1,4 +1,4 @@
-package com.chekurda.game_2048.utils
+package com.chekurda.common
 
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable

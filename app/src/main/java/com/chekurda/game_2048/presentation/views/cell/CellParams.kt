@@ -3,7 +3,8 @@ package com.chekurda.game_2048.presentation.views.cell
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import com.chekurda.game_2048.R
-import com.chekurda.game_2048.utils.StringUtils.EMPTY
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.StringUtils.EMPTY
 
 enum class CellParams(
     val value: String,

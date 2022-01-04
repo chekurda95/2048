@@ -5,7 +5,7 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import androidx.appcompat.widget.AppCompatTextView
 import android.util.AttributeSet
-import com.chekurda.game_2048.utils.StringUtils
+import org.apache.commons.lang3.StringUtils.EMPTY
 
 class CellView @JvmOverloads constructor(
     context: Context,
@@ -25,7 +25,7 @@ class CellView @JvmOverloads constructor(
     }
 
     override fun setText(text: CharSequence?, type: BufferType?) {
-        val textValue = if (text == "0") StringUtils.EMPTY else text
+        val textValue = if (text == "0") EMPTY else text
         super.setText(textValue, type)
     }
 
