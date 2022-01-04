@@ -4,6 +4,7 @@
         package="com.chekurda.game_2048">
 
     <application
+        android:name=".app.GameApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"

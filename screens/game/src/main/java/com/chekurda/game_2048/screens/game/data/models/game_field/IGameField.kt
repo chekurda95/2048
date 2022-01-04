@@ -2,7 +2,7 @@ package com.chekurda.game_2048.screens.game.data.models.game_field
 
 import com.chekurda.game_2048.screens.game.data.models.cell.Cell
 
-interface IGameField{
+internal interface IGameField{
 
     fun getCell(x: Int, y: Int): Cell
 

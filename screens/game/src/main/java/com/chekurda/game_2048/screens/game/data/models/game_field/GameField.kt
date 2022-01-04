@@ -2,7 +2,7 @@ package com.chekurda.game_2048.screens.game.data.models.game_field
 
 import com.chekurda.game_2048.screens.game.data.models.cell.Cell
 
-class GameField: IGameField {
+internal class GameField: IGameField {
     private var cellsList: List<Cell>
     private var movedList = ArrayList<Int>(16)
 

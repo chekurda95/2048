@@ -1,6 +1,6 @@
 package com.chekurda.game_2048.screens.game.presentation.gamefield.view
 
-interface IGameFragment {
+internal interface IGameFragment {
 
     fun drawField(listOfCellsValues: List<Int>)
 

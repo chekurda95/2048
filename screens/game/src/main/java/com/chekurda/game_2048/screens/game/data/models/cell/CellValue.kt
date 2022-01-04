@@ -1,6 +1,6 @@
 package com.chekurda.game_2048.screens.game.data.models.cell
 
-enum class CellValue(val value: Int) {
+internal enum class CellValue(val value: Int) {
     C0(0),
     C2(2),
     C4(4),

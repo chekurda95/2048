@@ -5,8 +5,8 @@ import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.chekurda.game_2048.AppPlugin.gameFragmentFactory
 import com.chekurda.game_2048.R
-import com.chekurda.game_2048.screens.game.presentation.gamefield.view.GameFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .add(R.id.fragment_container, GameFragment.newInstance())
+                .add(R.id.fragment_container, gameFragmentFactory.createGameFragment())
                 .commit()
         }
     }

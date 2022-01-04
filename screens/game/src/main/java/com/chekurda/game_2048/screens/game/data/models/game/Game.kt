@@ -4,7 +4,7 @@ import com.chekurda.game_2048.screens.game.data.models.cell.Cell
 import com.chekurda.game_2048.screens.game.data.models.game_field.GameField
 import java.util.*
 
-class Game : IGame, IMove {
+internal class Game : IGame, IMove {
 
     private lateinit var field: GameField
 

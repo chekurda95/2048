@@ -11,7 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
 
-class GamePresenter: ViewModel(), IGamePresenter {
+internal class GamePresenter: ViewModel(), IGamePresenter {
 
     private var view: IGameFragment? = null
     private val game = Game()

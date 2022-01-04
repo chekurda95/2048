@@ -9,6 +9,7 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.chekurda.game_2048.screens.game.R
+import com.chekurda.game_2048.screens.game.contract.GameFragmentFactory
 import com.chekurda.game_2048.screens.game.presentation.gamefield.delegates.SwipeControllerDelegate
 import com.chekurda.game_2048.screens.game.presentation.gamefield.delegates.SwipeDelegate
 import com.chekurda.game_2048.screens.game.presentation.gamefield.presenter.GamePresenter
@@ -16,13 +17,14 @@ import com.chekurda.game_2048.screens.game.presentation.gamefield.presenter.IGam
 import com.chekurda.game_2048.screens.game.presentation.views.cell.CellView
 
 @SuppressLint("ClickableViewAccessibility")
-class GameFragment : Fragment(),
+internal class GameFragment : Fragment(),
     IGameFragment,
     SwipeDelegate by SwipeControllerDelegate() {
 
-    companion object {
+    companion object : GameFragmentFactory {
 
-        fun newInstance() = GameFragment()
+        override fun createGameFragment() =
+            GameFragment()
     }
 
     private val gamePresenter: IGamePresenter by lazy { ViewModelProvider(this)[GamePresenter::class.java] }

@@ -5,7 +5,7 @@ import androidx.annotation.DrawableRes
 import com.chekurda.game_2048.screens.game.R
 import org.apache.commons.lang3.StringUtils.EMPTY
 
-enum class CellParams(
+internal enum class CellParams(
     val value: String,
     val textSize: Float,
     @ColorInt val textColor: Int,

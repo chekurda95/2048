@@ -7,7 +7,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import android.util.AttributeSet
 import org.apache.commons.lang3.StringUtils.EMPTY
 
-class CellView @JvmOverloads constructor(
+internal class CellView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

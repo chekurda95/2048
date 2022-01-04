@@ -1,6 +1,6 @@
 package com.chekurda.game_2048.screens.game.data.models.game
 
-interface IMove{
+internal interface IMove{
 
     fun leftSwipe()
 

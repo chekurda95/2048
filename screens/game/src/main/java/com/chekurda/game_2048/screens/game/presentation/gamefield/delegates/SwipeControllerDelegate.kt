@@ -6,12 +6,12 @@ import android.view.View
 import com.chekurda.game_2048.screens.game.presentation.gamefield.delegates.SwipeDirection.*
 import kotlin.math.abs
 
-interface SwipeDelegate : View.OnTouchListener {
+internal interface SwipeDelegate : View.OnTouchListener {
 
     fun initSwipeDelegate(view: View, listener: SwipeListener)
 }
 
-class SwipeControllerDelegate : SwipeDelegate {
+internal class SwipeControllerDelegate : SwipeDelegate {
 
     private lateinit var swipeListener: SwipeListener
     private val actionDownPosition = TouchPosition()
