@@ -2,6 +2,11 @@ package com.chekurda.gradle
 
 import com.chekurda.gradle.root_config.ApplicationCfgPlugin
 import com.chekurda.gradle.sub_config.ModuleCfgPlugin
+import com.chekurda.gradle.sub_config.DaggerCfgPlugin
+import com.chekurda.gradle.sub_config.KotlinCfgPlugin
+import com.chekurda.gradle.sub_config.BaseModuleCfgPlugin
+import com.chekurda.gradle.sub_config.RxCfgPlugin
+import com.chekurda.gradle.sub_config.SdkCfgPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -28,8 +33,28 @@ class GradleCfgPlugin implements Plugin<Project> {
             project.getPlugins().apply(ApplicationCfgPlugin.class)
         }
 
+        void enableBaseModuleCfg() {
+            project.getPlugins().apply(BaseModuleCfgPlugin.class)
+        }
+
         void enableModuleCfg() {
             project.getPlugins().apply(ModuleCfgPlugin.class)
+        }
+
+        void enableSdkCfg() {
+            project.getPlugins().apply(SdkCfgPlugin.class)
+        }
+
+        void enableKotlinCfg() {
+            project.getPlugins().apply(KotlinCfgPlugin.class)
+        }
+
+        void enableRxCfg() {
+            project.getPlugins().apply(RxCfgPlugin.class)
+        }
+
+        void enableDaggerCfg() {
+            project.getPlugins().apply(DaggerCfgPlugin.class)
         }
     }
 }
