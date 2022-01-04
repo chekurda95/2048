@@ -1,0 +1,2 @@
+include ':testing'
+project(':testing').projectDir = new File(settingsDir, "$common_dir/testing")
