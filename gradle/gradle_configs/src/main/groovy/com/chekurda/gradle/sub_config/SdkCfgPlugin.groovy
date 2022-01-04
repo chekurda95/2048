@@ -11,6 +11,8 @@ class SdkCfgPlugin implements Plugin<Project> {
             api "androidx.annotation:annotation:$project.rootProject.ext.annotationVersion"
             api "org.apache.commons:commons-lang3:$project.rootProject.ext.apacheCommonsVersion"
 
+            api "androidx.fragment:fragment:$project.rootProject.ext.fragmentVersion"
+            api "androidx.fragment:fragment-ktx:$project.rootProject.ext.fragmentVersion"
             api "androidx.core:core-ktx:$project.rootProject.ext.androidCore"
             api "androidx.appcompat:appcompat:$project.rootProject.ext.appCompatVersion"
             api "androidx.lifecycle:lifecycle-viewmodel-ktx:$project.rootProject.ext.androidLifecycleViewmodel"

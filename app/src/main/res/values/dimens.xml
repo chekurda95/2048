@@ -1,10 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <!-- Cell -->
-    <dimen name="cell_stroke_width">1dp</dimen>
-    <dimen name="cell_corner_radius">6dp</dimen>
-
-    <!-- Other -->
-
-</resources>
+<resources/>

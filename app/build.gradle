@@ -2,8 +2,6 @@ apply plugin: 'gradle-cfg-plugin'
 
 gradleConfig { cfg ->
     cfg.enableApplicationCfg()
-    cfg.enableBaseModuleCfg()
-    cfg.enableKotlinCfg()
 }
 
 dependencies {
