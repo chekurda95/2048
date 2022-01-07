@@ -1,4 +1,4 @@
-package com.chekurda.game_2048.screens.game.presentation.gamefield.delegates
+package com.chekurda.game_2048.screens.game.presentation.delegates
 
 internal interface SwipeListener {
 

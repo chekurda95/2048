@@ -1,9 +1,9 @@
-package com.chekurda.game_2048.screens.game.presentation.gamefield.delegates
+package com.chekurda.game_2048.screens.game.presentation.delegates
 
 import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
-import com.chekurda.game_2048.screens.game.presentation.gamefield.delegates.SwipeDirection.*
+import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeDirection.*
 import kotlin.math.abs
 
 internal interface SwipeDelegate : View.OnTouchListener {
