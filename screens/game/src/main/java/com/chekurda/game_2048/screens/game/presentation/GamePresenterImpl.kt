@@ -1,29 +1,19 @@
-package com.chekurda.game_2048.screens.game.presentation.gamefield.presenter
+package com.chekurda.game_2048.screens.game.presentation
 
-import androidx.lifecycle.ViewModel
+import com.chekurda.common.base_fragment.BasePresenterImpl
 import com.chekurda.game_2048.screens.game.data.models.game.Game
-import com.chekurda.game_2048.screens.game.presentation.gamefield.delegates.SwipeDirection
-import com.chekurda.game_2048.screens.game.presentation.gamefield.delegates.SwipeDirection.*
-import com.chekurda.game_2048.screens.game.presentation.gamefield.view.IGameFragment
+import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeDirection
+import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeDirection.*
 import com.chekurda.common.storeIn
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
 
-internal class GamePresenter: ViewModel(), IGamePresenter {
+internal class GamePresenterImpl : BasePresenterImpl<GameView>(), GamePresenter {
 
-    private var view: IGameFragment? = null
     private val game = Game()
     private val disposer = CompositeDisposable()
-
-    override fun attachView(view: IGameFragment) {
-        this.view = view
-    }
-
-    override fun detachView() {
-        view = null
-    }
 
     override fun startNewGame() {
         game.startNewGame()
@@ -50,7 +40,7 @@ internal class GamePresenter: ViewModel(), IGamePresenter {
             .storeIn(disposer)
     }
 
-    override fun onCleared() {
+    override fun onDestroy() {
         disposer.dispose()
     }
 }

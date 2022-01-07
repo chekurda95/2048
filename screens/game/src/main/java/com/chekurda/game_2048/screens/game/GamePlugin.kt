@@ -5,7 +5,7 @@ import com.chekurda.common.plugin_struct.Dependency
 import com.chekurda.common.plugin_struct.Feature
 import com.chekurda.common.plugin_struct.FeatureWrapper
 import com.chekurda.game_2048.screens.game.contract.GameFragmentFactory
-import com.chekurda.game_2048.screens.game.presentation.gamefield.view.GameFragment
+import com.chekurda.game_2048.screens.game.presentation.GameFragment
 
 object GamePlugin : BasePlugin<Unit>() {
 
