@@ -3,6 +3,7 @@
  */
 package com.chekurda.design.custom_view_tools.utils
 
+import android.content.Context
 import android.text.TextPaint
 import android.view.View
 import androidx.annotation.FloatRange
@@ -31,7 +32,7 @@ fun View.safeRequestLayout() {
  * округленное до целого числа (по правилам округления).
  */
 @Px
-fun View.dp(@FloatRange(from = 0.0) value: Float): Int =
+fun Context.dp(@FloatRange(from = 0.0) value: Float): Int =
     (resources.displayMetrics.density * value).mathRoundToInt()
 
 /**
@@ -39,7 +40,7 @@ fun View.dp(@FloatRange(from = 0.0) value: Float): Int =
  * округленное до целого числа (по правилам округления).
  */
 @Px
-fun View.dp(@IntRange(from = 0) value: Int): Int =
+fun Context.dp(@IntRange(from = 0) value: Int): Int =
     dp(value.toFloat())
 
 /**
@@ -47,7 +48,7 @@ fun View.dp(@IntRange(from = 0) value: Int): Int =
  * округленное до целого числа (по правилам округления).
  */
 @Px
-fun View.sp(@FloatRange(from = 0.0) value: Float): Int =
+fun Context.sp(@FloatRange(from = 0.0) value: Float): Int =
     (resources.displayMetrics.scaledDensity * value).mathRoundToInt()
 
 /**
@@ -55,7 +56,7 @@ fun View.sp(@FloatRange(from = 0.0) value: Float): Int =
  * округленное до целого числа (по правилам округления).
  */
 @Px
-fun View.sp(@IntRange(from = 0) value: Int): Int =
+fun Context.sp(@IntRange(from = 0) value: Int): Int =
     sp(value.toFloat())
 
 /**

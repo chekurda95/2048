@@ -2,6 +2,20 @@
 <resources>
     <color name="black_overlay">#66000000</color>
 
+    <!-- Cell text color -->
     <color name="cell_text_color_gray">#766D64</color>
     <color name="cell_text_color_white">#FFFCF3</color>
+
+    <!-- Cell background color -->
+    <color name="cell_background_color_2">#EEE4DA</color>
+    <color name="cell_background_color_4">#ECE0C8</color>
+    <color name="cell_background_color_8">#F2B179</color>
+    <color name="cell_background_color_16">#EB8E55</color>
+    <color name="cell_background_color_32">#F77B5F</color>
+    <color name="cell_background_color_64">#EC5830</color>
+    <color name="cell_background_color_128">#F3D96B</color>
+    <color name="cell_background_color_256">#F1D04B</color>
+    <color name="cell_background_color_512">#E4C02A</color>
+    <color name="cell_background_color_1024">#ECC400</color>
+    <color name="cell_background_color_2048">#FFD400</color>
 </resources>
