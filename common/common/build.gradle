@@ -3,4 +3,5 @@ apply plugin: 'gradle-cfg-plugin'
 gradleConfig { cfg ->
     cfg.enableModuleCfg()
     cfg.enableRxCfg()
+    cfg.enableSdkCfg()
 }
