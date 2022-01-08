@@ -12,6 +12,7 @@ import com.chekurda.design.custom_view_tools.utils.dp
 import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.presentation.views.cell.params.CellParams
 import com.chekurda.game_2048.screens.game.presentation.views.cell.params.createCellParams
+import com.chekurda.game_2048.screens.game.presentation.views.cell.utils.CellTextSizeHelper.calculateTextSize
 import org.apache.commons.lang3.StringUtils.EMPTY
 import java.lang.RuntimeException
 
@@ -72,7 +73,7 @@ class CellView2(context: Context, attrs: AttributeSet? = null) : View(context) {
 
     private fun updateText() {
         if (params.value == EMPTY || measuredWidth == 0 || measuredHeight == 0) return
-        textPaint.textSize = calculateTextSize()
+        textPaint.textSize = calculateTextSize(context, params.value, measuredWidth)
 
         val textBounds = Rect().also {
             textPaint.getTextBounds(params.value, 0, params.value.length, it)
@@ -82,47 +83,6 @@ class CellView2(context: Context, attrs: AttributeSet? = null) : View(context) {
         val top = (measuredHeight / 2f) + (textBounds.height() / 2) - textBounds.bottom
 
         textPos = left to top
-    }
-
-    // TODO отладить
-    private fun calculateTextSize(): Float {
-        if (params.value == EMPTY || measuredWidth == 0 || measuredHeight == 0) return 0f
-
-        val minPadding = context.dp(15)
-        val maxWidth = measuredWidth - minPadding * 2
-        val maxHeight = measuredHeight - minPadding * 2
-
-        var textSizeDp = DEFAULT_TEXT_SIZE_DP
-        val infelicity = context.dp(2)
-        val textPaint = TextPaint().apply {
-            isAntiAlias = true
-            textSize = context.dp(textSizeDp).toFloat()
-            isFakeBoldText = true
-        }
-        val textBounds = Rect().also {
-            textPaint.getTextBounds(params.value, 0, params.value.length, it)
-        }
-
-        var resultTextSize: Float? = null
-
-        do {
-            if ((textBounds.width() in (maxWidth - infelicity)..(maxWidth + infelicity) && textBounds.height() <= maxHeight)
-                || (textBounds.height() in (maxHeight - infelicity)..(maxHeight + infelicity) && textBounds.width() <= maxWidth)) {
-                resultTextSize = textSizeDp
-                break
-            }
-            if (textBounds.width() <= maxWidth && textBounds.height() <= maxHeight) {
-                textSizeDp *= 1.5f
-                textPaint.textSize = textSizeDp
-                textPaint.getTextBounds(params.value, 0, params.value.length, textBounds)
-            } else {
-                textSizeDp *= 0.75f
-                textPaint.textSize = textSizeDp
-                textPaint.getTextBounds(params.value, 0, params.value.length, textBounds)
-            }
-        } while (resultTextSize == null)
-
-        return resultTextSize!!
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -163,17 +123,12 @@ class CellView2(context: Context, attrs: AttributeSet? = null) : View(context) {
         }
     }
 
-    private fun animateGrowing() {
+    private fun animateGrowing() = Unit
 
-    }
-
-    private fun animateShowing() {
-
-    }
+    private fun animateShowing() = Unit
 
     override fun hasOverlappingRendering(): Boolean = false
 }
 
 private const val CELL_BORDER_SIZE_DP = 1
 private const val CELL_BORDER_RADIUS_DP = 6
-private const val DEFAULT_TEXT_SIZE_DP = 20f
