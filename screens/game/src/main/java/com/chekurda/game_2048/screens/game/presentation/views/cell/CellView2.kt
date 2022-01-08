@@ -84,6 +84,7 @@ class CellView2(context: Context, attrs: AttributeSet? = null) : View(context) {
         textPos = left to top
     }
 
+    // TODO отладить
     private fun calculateTextSize(): Float {
         if (params.value == EMPTY || measuredWidth == 0 || measuredHeight == 0) return 0f
 
