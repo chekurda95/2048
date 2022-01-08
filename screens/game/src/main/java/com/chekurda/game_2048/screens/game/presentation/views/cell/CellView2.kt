@@ -17,13 +17,16 @@ import java.lang.RuntimeException
 
 class CellView2(context: Context, attrs: AttributeSet? = null) : View(context) {
 
-    private val textPaint = TextPaint(ANTI_ALIAS_FLAG)
+    private val textPaint = TextPaint(ANTI_ALIAS_FLAG).apply {
+        isFakeBoldText = true
+    }
     private var textPos = Pair(0f, 0f)
 
     private val backgroundPaint = Paint(ANTI_ALIAS_FLAG)
     private val backgroundRect = RectF()
 
     private val borderPaint = Paint(ANTI_ALIAS_FLAG).apply {
+        color = getColor(context, R.color.black_overlay)
         style = Paint.Style.STROKE
         strokeWidth = context.dp(CELL_BORDER_SIZE_DP).toFloat()
     }
@@ -43,9 +46,7 @@ class CellView2(context: Context, attrs: AttributeSet? = null) : View(context) {
 
     init {
         setWillNotDraw(false)
-        borderPaint.color = getColor(context, R.color.black_overlay)
-
-        if (isInEditMode) value = 2
+        if (isInEditMode) value = 16
     }
 
     private fun updateView(value: Int) {
@@ -57,7 +58,7 @@ class CellView2(context: Context, attrs: AttributeSet? = null) : View(context) {
         }
         backgroundPaint.color = params.backgroundColor
 
-        if (isLaidOut) updateTextPos()
+        if (isLaidOut) updateText()
     }
 
     private fun checkAnimations(previousValue: Int, newValue: Int) {
@@ -69,17 +70,58 @@ class CellView2(context: Context, attrs: AttributeSet? = null) : View(context) {
         invalidate()
     }
 
-    private fun updateTextPos() {
+    private fun updateText() {
         if (params.value == EMPTY || measuredWidth == 0 || measuredHeight == 0) return
+        textPaint.textSize = calculateTextSize()
 
         val textBounds = Rect().also {
             textPaint.getTextBounds(params.value, 0, params.value.length, it)
         }
         // Рассчет координат для отрисовки текста по центру ячейки
-        val left = measuredWidth / 2f - textBounds.width() / 2
-        val top = measuredHeight / 2f + textBounds.height() / 2
+        val left = measuredWidth / 2f - (textBounds.width() / 2) - textBounds.left
+        val top = (measuredHeight / 2f) + (textBounds.height() / 2) - textBounds.bottom
 
         textPos = left to top
+    }
+
+    private fun calculateTextSize(): Float {
+        if (params.value == EMPTY || measuredWidth == 0 || measuredHeight == 0) return 0f
+
+        val minPadding = context.dp(15)
+        val maxWidth = measuredWidth - minPadding * 2
+        val maxHeight = measuredHeight - minPadding * 2
+
+        var textSizeDp = DEFAULT_TEXT_SIZE_DP
+        val infelicity = context.dp(2)
+        val textPaint = TextPaint().apply {
+            isAntiAlias = true
+            textSize = context.dp(textSizeDp).toFloat()
+            isFakeBoldText = true
+        }
+        val textBounds = Rect().also {
+            textPaint.getTextBounds(params.value, 0, params.value.length, it)
+        }
+
+        var resultTextSize: Float? = null
+
+        do {
+            if ((textBounds.width() in (maxWidth - infelicity)..(maxWidth + infelicity) && textBounds.height() <= maxHeight)
+                || (textBounds.height() in (maxHeight - infelicity)..(maxHeight + infelicity) && textBounds.width() <= maxWidth)) {
+                resultTextSize = textSizeDp
+                break
+            }
+            if (textBounds.width() <= maxWidth && textBounds.height() <= maxHeight) {
+                textSizeDp *= 1.5f
+                textPaint.textSize = textSizeDp
+                textPaint.getTextBounds(params.value, 0, params.value.length, textBounds)
+            } else {
+                textSizeDp *= 0.75f
+                textPaint.textSize = textSizeDp
+                textPaint.getTextBounds(params.value, 0, params.value.length, textBounds)
+            }
+        } while (resultTextSize == null)
+
+        return resultTextSize!!
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -92,7 +134,7 @@ class CellView2(context: Context, attrs: AttributeSet? = null) : View(context) {
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         if (changed) {
-            updateTextPos()
+            updateText()
             backgroundRect.set(
                 0f,
                 0f,
@@ -133,3 +175,4 @@ class CellView2(context: Context, attrs: AttributeSet? = null) : View(context) {
 
 private const val CELL_BORDER_SIZE_DP = 1
 private const val CELL_BORDER_RADIUS_DP = 6
+private const val DEFAULT_TEXT_SIZE_DP = 20f
