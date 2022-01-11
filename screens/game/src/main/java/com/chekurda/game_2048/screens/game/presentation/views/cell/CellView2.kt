@@ -12,7 +12,7 @@ import com.chekurda.design.custom_view_tools.utils.dp
 import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.presentation.views.cell.params.CellParams
 import com.chekurda.game_2048.screens.game.presentation.views.cell.params.createCellParams
-import com.chekurda.game_2048.screens.game.presentation.views.cell.utils.CellTextSizeHelper.calculateTextSize
+import com.chekurda.game_2048.screens.game.presentation.views.cell.utils.AutoTextSizeHelper.calculateTextSize
 import org.apache.commons.lang3.StringUtils.EMPTY
 import java.lang.RuntimeException
 
