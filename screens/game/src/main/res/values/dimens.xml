@@ -3,9 +3,10 @@
 
     <!-- Cell -->
     <dimen name="cell_stroke_width">1dp</dimen>
-    <dimen name="cell_corner_radius">6dp</dimen>
+    <dimen name="cell_corner_radius">4dp</dimen>
 
     <!-- Field -->
-    <dimen name="field_corner_radius">10dp</dimen>
+    <dimen name="field_corner_radius">6dp</dimen>
+    <dimen name="field_cell_separator_width">10dp</dimen>
 
 </resources>
