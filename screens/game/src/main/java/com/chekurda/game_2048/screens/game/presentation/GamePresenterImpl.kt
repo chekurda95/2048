@@ -10,7 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
 
-internal class GamePresenterImpl : BasePresenterImpl<GameView>(), GamePresenter {
+internal class GamePresenterImpl : BasePresenterImpl<GameFragmentView>(), GamePresenter {
 
     private val game = Game()
     private val disposer = CompositeDisposable()
