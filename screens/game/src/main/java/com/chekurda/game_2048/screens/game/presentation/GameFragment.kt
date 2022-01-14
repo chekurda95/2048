@@ -1,19 +1,20 @@
 package com.chekurda.game_2048.screens.game.presentation
 
 import android.annotation.SuppressLint
-import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.IdRes
 import com.chekurda.common.base_fragment.BasePresenterFragment
-import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.contract.GameFragmentFactory
 import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeControllerDelegate
 import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeDelegate
+import com.chekurda.game_2048.screens.game.presentation.views.GameView
 import com.chekurda.game_2048.screens.game.presentation.views.cell.CellView
 
 @SuppressLint("ClickableViewAccessibility")
-internal class GameFragment : BasePresenterFragment<GameView, GamePresenter>(),
-    GameView,
+internal class GameFragment : BasePresenterFragment<GameFragmentView, GamePresenter>(),
+    GameFragmentView,
     SwipeDelegate by SwipeControllerDelegate() {
 
     companion object : GameFragmentFactory {
@@ -21,11 +22,17 @@ internal class GameFragment : BasePresenterFragment<GameView, GamePresenter>(),
         override fun createGameFragment() = GameFragment()
     }
 
-    override val layoutRes: Int = R.layout.fragment_field
+    override val layoutRes: Int = -1
 
     private lateinit var viewList: List<CellView>
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun createView(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): View =
+        GameView(requireContext())
+
+    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewList = listOf(
             getCell(R.id.cell_0), getCell(R.id.cell_1), getCell(R.id.cell_2), getCell(R.id.cell_3),
@@ -35,7 +42,13 @@ internal class GameFragment : BasePresenterFragment<GameView, GamePresenter>(),
         )
         presenter.startNewGame()
         initSwipeDelegate(requireView().findViewById(R.id.game_field), presenter)
-    }
+
+        val cell = CellView2(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(200, 200)
+            value = 32
+        }
+        (view as ViewGroup).addView(cell)
+    }*/
 
     private fun getCell(@IdRes id: Int): CellView =
         requireView().findViewById(id)
@@ -50,7 +63,7 @@ internal class GameFragment : BasePresenterFragment<GameView, GamePresenter>(),
 
     override fun createPresenter(): GamePresenter = GamePresenterImpl()
 
-    override fun getPresenterView(): GameView = this
+    override fun getPresenterView(): GameFragmentView = this
 }
 
 
