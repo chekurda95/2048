@@ -5,6 +5,7 @@
     <dimen name="cell_stroke_width">1dp</dimen>
     <dimen name="cell_corner_radius">6dp</dimen>
 
-    <!-- Other -->
+    <!-- Field -->
+    <dimen name="field_corner_radius">10dp</dimen>
 
 </resources>

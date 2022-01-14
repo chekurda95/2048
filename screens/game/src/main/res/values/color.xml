@@ -7,6 +7,11 @@
     <!-- Game screen -->
     <color name="game_screen_background">#EFEAE6</color>
 
+    <!-- Game field -->
+    <color name="game_field_background">#BAAD9F</color>
+    <color name="empty_cell_background_color">#CCC0B4</color>
+
+
     <!-- Cell text color -->
     <color name="cell_text_color_gray">@color/gray</color>
     <color name="cell_text_color_white">@color/white</color>

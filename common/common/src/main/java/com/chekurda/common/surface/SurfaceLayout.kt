@@ -16,7 +16,7 @@ class SurfaceLayout(
         val canvas = surfaceHolder.lockCanvas()
         try {
             synchronized(surfaceHolder) {
-                drawingLayout.draw(canvas)
+                drawingLayout.drawLayout(canvas)
             }
         } catch (ex: Exception) {
             // Nothing
@@ -29,6 +29,6 @@ class SurfaceLayout(
 
         fun update(deltaTimeMs: Int)
 
-        fun draw(canvas: Canvas)
+        fun drawLayout(canvas: Canvas)
     }
 }
