@@ -75,17 +75,14 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
     }
 
     override fun setResolution(width: Int, height: Int) {
-        val oldWidth = this.width
-        val oldHeight = this.height
         super.setResolution(width, height)
-
-        if (oldWidth != width || oldHeight != height) {
-            updateText()
-        }
-
         if (width != height) {
             throw RuntimeException("Ячейка не квадратная: width = $width, height = $height")
         }
+    }
+
+    override fun onSizeChanged(width: Int, height: Int) {
+        updateText()
     }
 
     override fun draw(canvas: Canvas) {
