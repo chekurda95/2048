@@ -11,6 +11,7 @@ import com.chekurda.design.custom_view_tools.utils.toFloat
 import com.chekurda.design.custom_view_tools.utils.update
 import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig
+import java.lang.RuntimeException
 import kotlin.math.roundToInt
 
 internal class GameBoard(context: Context) : GameFieldObject(context) {
@@ -28,6 +29,9 @@ internal class GameBoard(context: Context) : GameFieldObject(context) {
     }
 
     private val cellsPositions = HashMap<Int, RectF>()
+
+    fun getRectForCell(number: Int): RectF =
+        requireCellRect(number)
 
     override fun onSizeChanged(width: Int, height: Int) {
         placeCells()
@@ -95,4 +99,9 @@ internal class GameBoard(context: Context) : GameFieldObject(context) {
             canvas.drawRoundRect(it.value, cellCornerRadius, cellCornerRadius, cellBackgroundPaint)
         }
     }
+
+    private fun requireCellRect(number: Int): RectF =
+        cellsPositions[number].let {
+            it ?: throw RuntimeException("Запрошены координаты ячейки для несуществующей позиции: cellNumber = $number")
+        }
 }
