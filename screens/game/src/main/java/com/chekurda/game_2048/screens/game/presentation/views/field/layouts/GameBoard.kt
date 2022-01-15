@@ -29,8 +29,7 @@ internal class GameBoard(context: Context) : GameFieldObject(context) {
 
     private val cellsPositions = HashMap<Int, RectF>()
 
-    override fun setResolution(width: Int, height: Int) {
-        super.setResolution(width, height)
+    override fun onSizeChanged(width: Int, height: Int) {
         placeCells()
     }
 
