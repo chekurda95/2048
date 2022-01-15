@@ -42,7 +42,7 @@ internal enum class CellColors(
 ) {
     V0(Color.TRANSPARENT, Color.TRANSPARENT),
     V2(R.color.cell_text_color_gray, R.color.cell_background_color_2),
-    V4(R.color.cell_text_color_white, R.color.cell_background_color_4),
+    V4(R.color.cell_text_color_gray, R.color.cell_background_color_4),
     V8(R.color.cell_text_color_white, R.color.cell_background_color_8),
     V16(R.color.cell_text_color_white, R.color.cell_background_color_16),
     V32(R.color.cell_text_color_white, R.color.cell_background_color_32),
