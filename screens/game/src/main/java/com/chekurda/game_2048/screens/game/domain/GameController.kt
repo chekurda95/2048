@@ -1,31 +1,31 @@
 package com.chekurda.game_2048.screens.game.domain
 
 import com.chekurda.game_2048.screens.game.data.models.game.GameState
-import com.chekurda.game_2048.screens.game.data.models.game.GameState.INIT
-import com.chekurda.game_2048.screens.game.data.models.game.GameState.START_NEW_GAME
+import com.chekurda.game_2048.screens.game.data.models.game.GameState.*
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 
 internal class GameController {
 
-    private val stateChangeListeners = mutableListOf<GameStateChangeListener>()
+    private val stateSubject = BehaviorSubject.createDefault(INIT)
 
-    private var state: GameState = INIT
+    val stateObservable: Observable<GameState> = stateSubject.distinctUntilChanged()
 
-    fun setStateListener(listener: GameStateChangeListener) {
-        stateChangeListeners.add(listener)
-    }
+    val state: GameState
+        get() = stateSubject.value!!
 
     fun startNewGame() {
-        state = START_NEW_GAME
+        stateSubject.onNext(START_NEW_GAME)
+    }
+
+    fun gameIsReady() {
+        stateSubject.onNext(PLAYING)
     }
 
     fun onFieldChanged() = Unit
 
-    fun onDestroy() {
-        stateChangeListeners.clear()
-    }
+    interface GameControllerConnector {
 
-    fun interface GameStateChangeListener {
-
-        fun onStateChanged(state: GameState)
+        fun attachGameController(controller: GameController)
     }
 }
