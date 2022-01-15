@@ -23,7 +23,8 @@ import com.chekurda.game_2048.screens.game.presentation.views.field.GameFieldVie
 internal class GameView(
     context: Context,
     attrs: AttributeSet? = null
-) : ViewGroup(context), GameControllerConnector {
+) : ViewGroup(context),
+    GameControllerConnector {
 
     private val backgroundRect = Rect()
     private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {

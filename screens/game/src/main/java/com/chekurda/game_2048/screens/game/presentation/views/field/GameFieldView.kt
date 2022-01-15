@@ -25,7 +25,9 @@ import java.lang.RuntimeException
 internal class GameFieldView(
     context: Context,
     attrs: AttributeSet? = null
-) : SurfaceView(context), DrawingLayout, GameControllerConnector {
+) : SurfaceView(context),
+    DrawingLayout,
+    GameControllerConnector {
 
     private val board = GameBoard(context)
     private val cells = HashMap<Int, GameCell>()
