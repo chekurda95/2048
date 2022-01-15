@@ -22,7 +22,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
     private var textPos = 0f to 0f
 
     private val borderPaint = AntiPaint().apply {
-        color = getColor(context, R.color.black_overlay)
+        color = getColor(context, R.color.cell_border_color)
         style = STROKE
         strokeWidth = resources.getDimensionPixelSize(R.dimen.cell_stroke_width).toFloat()
     }
@@ -71,7 +71,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
         val left = width.half - textBounds.width().half - textBounds.left
         val top = height.half + textBounds.height().half - textBounds.bottom
 
-        textPos = left.toFloat() to top.toFloat()
+        textPos = position.x + left to position.y + top
     }
 
     override fun setResolution(width: Int, height: Int) {
@@ -86,6 +86,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
     }
 
     override fun draw(canvas: Canvas) {
+        if (value == 0 || width == 0 || height == 0) return
         drawBackground(canvas)
         drawValue(canvas)
     }
