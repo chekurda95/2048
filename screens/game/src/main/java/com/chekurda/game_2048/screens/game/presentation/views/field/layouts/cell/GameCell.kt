@@ -1,4 +1,4 @@
-package com.chekurda.game_2048.screens.game.presentation.views.field.layouts
+package com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell
 
 import android.content.Context
 import android.graphics.Canvas
@@ -9,9 +9,8 @@ import com.chekurda.common.half
 import com.chekurda.design.custom_view_tools.utils.AntiPaint
 import com.chekurda.design.custom_view_tools.utils.AntiTextPaint
 import com.chekurda.game_2048.screens.game.R
-import com.chekurda.game_2048.screens.game.presentation.views.cell.params.CellParams
-import com.chekurda.game_2048.screens.game.presentation.views.cell.params.createCellParams
-import com.chekurda.game_2048.screens.game.presentation.views.cell.utils.AutoTextSizeHelper
+import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameFieldObject
+import com.chekurda.game_2048.screens.game.presentation.views.field.utils.AutoTextSizeHelper.calculateTextSize
 import org.apache.commons.lang3.StringUtils
 import java.lang.RuntimeException
 
@@ -63,7 +62,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
 
     private fun updateText() {
         if (params.value == StringUtils.EMPTY || width == 0 || height == 0) return
-        textPaint.textSize = AutoTextSizeHelper.calculateTextSize(context, params.value, width)
+        textPaint.textSize = calculateTextSize(context, params.value, width)
 
         val textBounds = Rect().also {
             textPaint.getTextBounds(params.value, 0, params.value.length, it)
