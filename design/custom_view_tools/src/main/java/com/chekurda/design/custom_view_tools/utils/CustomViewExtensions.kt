@@ -60,18 +60,36 @@ fun Context.sp(@IntRange(from = 0) value: Int): Int =
     sp(value.toFloat())
 
 /**
- * Получить ширину текста для данного [TextPaint].
+ * Получить значение в пикселях по переданному значению в dp,
+ * округленное до целого числа (по правилам округления).
  */
 @Px
-fun TextPaint.getTextWidth(text: CharSequence): Int =
-    measureText(text, 0, text.length).toInt()
+fun View.dp(@FloatRange(from = 0.0) value: Float): Int =
+    context.dp(value)
 
 /**
- * Получить высоту одной строчки текста для данного [TextPaint].
+ * Получить значение в пикселях по переданному значению в dp,
+ * округленное до целого числа (по правилам округления).
  */
-@get:Px
-val TextPaint.textHeight: Int
-    get() = ceil(fontMetrics.descent - fontMetrics.ascent).toInt()
+@Px
+fun View.dp(@IntRange(from = 0) value: Int): Int =
+    context.dp(value.toFloat())
+
+/**
+ * Получить значение в пикселях по переданному значению в sp,
+ * округленное до целого числа (по правилам округления).
+ */
+@Px
+fun View.sp(@FloatRange(from = 0.0) value: Float): Int =
+    context.sp(value)
+
+/**
+ * Получить значение в пикселях по переданному значению в sp,
+ * округленное до целого числа (по правилам округления).
+ */
+@Px
+fun View.sp(@IntRange(from = 0) value: Int): Int =
+    context.sp(value)
 
 /**
  * Метод для правильного математического округления дробных чисел по модулю.

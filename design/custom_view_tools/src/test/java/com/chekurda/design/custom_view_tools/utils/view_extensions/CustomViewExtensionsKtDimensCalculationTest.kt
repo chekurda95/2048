@@ -1,5 +1,6 @@
 package com.chekurda.design.custom_view_tools.utils.view_extensions
 
+import android.content.Context
 import android.content.res.Resources
 import android.util.DisplayMetrics
 import android.util.DisplayMetrics.DENSITY_DEFAULT
@@ -25,6 +26,7 @@ import com.chekurda.design.custom_view_tools.utils.sp
 class CustomViewExtensionsKtDimensCalculationTest {
 
     private val mockView: View = mock()
+    private val mockContext: Context = mock()
     private val mockResources: Resources = mock()
     private lateinit var displayMetrics: DisplayMetrics
 
@@ -34,6 +36,8 @@ class CustomViewExtensionsKtDimensCalculationTest {
             density = DENSITY_DEFAULT.toFloat()
             scaledDensity = DENSITY_DEFAULT * 1.5f
         }
+        whenever(mockView.context).thenReturn(mockContext)
+        whenever(mockContext.resources).thenReturn(mockResources)
         whenever(mockView.resources).thenReturn(mockResources)
         whenever(mockResources.displayMetrics).thenReturn(displayMetrics)
     }
