@@ -11,7 +11,7 @@ fun Rect.update(
     top: Int = this.top,
     right: Int = this.right,
     bottom: Int = this.bottom
-) {
+): Rect = apply {
     set(left, top, right, bottom)
 }
 
@@ -23,7 +23,7 @@ fun RectF.update(
     top: Float = this.top,
     right: Float = this.right,
     bottom: Float = this.bottom
-) {
+): RectF = apply {
     set(left, top, right, bottom)
 }
 

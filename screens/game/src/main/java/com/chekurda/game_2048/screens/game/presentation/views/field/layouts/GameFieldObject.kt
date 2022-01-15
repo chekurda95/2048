@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.RectF
+import com.chekurda.design.custom_view_tools.utils.update
 
 /**
  * Общая реализация объектов игрового поля
@@ -22,11 +23,9 @@ internal abstract class GameFieldObject(
         get() = rect.height().toInt()
 
     open fun setResolution(width: Int, height: Int) {
-        rect.set(
-            0f,
-            0f,
-            width.toFloat(),
-            height.toFloat()
+        rect.update(
+            right = width.toFloat(),
+            bottom = height.toFloat()
         )
     }
 
