@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.annotation.CallSuper
 import com.chekurda.design.custom_view_tools.utils.AntiPaint
+import com.chekurda.design.custom_view_tools.utils.copy
 
 /**
  * Общая реализация объектов игрового поля
@@ -17,6 +18,7 @@ internal abstract class GameFieldObject(
     protected val resources: Resources = context.resources
     protected val backgroundPaint = AntiPaint()
     protected var rect = RectF()
+        private set
 
     protected var width: Int = 0
         private set
@@ -29,6 +31,12 @@ internal abstract class GameFieldObject(
             field = value
             updateRect()
         }
+
+    fun setRect(rectF: RectF) {
+        if (rectF == rect) return
+        position = Position(rectF.left, rectF.top)
+        setResolution(rectF.width().toInt(), rectF.height().toInt())
+    }
 
     @CallSuper
     open fun setResolution(width: Int, height: Int) {
