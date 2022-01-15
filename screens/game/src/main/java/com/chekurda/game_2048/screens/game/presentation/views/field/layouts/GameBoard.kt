@@ -19,7 +19,6 @@ internal class GameBoard(context: Context) : GameFieldObject(context) {
         getColor(context, R.color.game_screen_background),
         getColor(context, R.color.game_field_background)
     )
-    private val backgroundPaint = AntiPaint()
     private val backgroundCornerRadius = resources.getDimensionPixelOffset(R.dimen.field_corner_radius).toFloat()
 
     private val cellSeparatorWidth = resources.getDimensionPixelOffset(R.dimen.field_cell_separator_width)

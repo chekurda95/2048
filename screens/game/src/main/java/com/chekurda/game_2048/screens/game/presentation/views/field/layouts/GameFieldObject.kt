@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.RectF
+import com.chekurda.design.custom_view_tools.utils.AntiPaint
 import com.chekurda.design.custom_view_tools.utils.update
 
 /**
@@ -14,6 +15,7 @@ internal abstract class GameFieldObject(
 ) {
 
     protected val resources: Resources = context.resources
+    protected val backgroundPaint = AntiPaint()
     protected var rect = RectF()
 
     protected val width: Int
