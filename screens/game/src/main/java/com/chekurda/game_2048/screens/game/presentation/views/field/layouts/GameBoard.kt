@@ -30,6 +30,8 @@ internal class GameBoard(context: Context) : GameFieldObject(context) {
 
     private val cellsPositions = HashMap<Int, RectF>()
 
+    var isReady: Boolean = false
+
     fun getRectForCell(number: Int): RectF =
         requireCellRect(number)
 
@@ -68,6 +70,8 @@ internal class GameBoard(context: Context) : GameFieldObject(context) {
 
             changePreviousRectForNewRow()
         }
+
+        isReady = true
     }
 
     private fun getCellSize(): Int {

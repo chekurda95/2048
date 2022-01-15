@@ -5,6 +5,9 @@ import com.chekurda.game_2048.screens.game.data.models.game.Game
 import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeDirection
 import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeDirection.*
 import com.chekurda.common.storeIn
+import com.chekurda.game_2048.screens.game.data.models.game.GameState
+import com.chekurda.game_2048.screens.game.data.models.game.GameState.INIT
+import com.chekurda.game_2048.screens.game.domain.GameController
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -12,12 +15,28 @@ import java.util.concurrent.TimeUnit
 
 internal class GamePresenterImpl : BasePresenterImpl<GameFragmentView>(), GamePresenter {
 
+    private val gameController = GameController()
+
     private val game = Game()
     private val disposer = CompositeDisposable()
 
+    override fun attachView(view: GameFragmentView) {
+        super.attachView(view)
+        view.attachGameController(gameController)
+
+        tryStartNewGame()
+    }
+
+    private fun tryStartNewGame() {
+        if (gameController.state == INIT) {
+            startNewGame()
+        }
+    }
+
     override fun startNewGame() {
-        game.startNewGame()
-        view!!.drawField(game.getField().getCellsValues())
+        gameController.startNewGame()
+        /*game.startNewGame()
+        view!!.drawField(game.getField().getCellsValues())*/
     }
 
     override fun onSwipe(direction: SwipeDirection) {

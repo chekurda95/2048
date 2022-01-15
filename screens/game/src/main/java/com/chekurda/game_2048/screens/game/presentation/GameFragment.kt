@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
 import com.chekurda.common.base_fragment.BasePresenterFragment
+import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.contract.GameFragmentFactory
+import com.chekurda.game_2048.screens.game.domain.GameController
 import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeControllerDelegate
 import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeDelegate
 import com.chekurda.game_2048.screens.game.presentation.views.GameView
@@ -24,13 +26,27 @@ internal class GameFragment : BasePresenterFragment<GameFragmentView, GamePresen
 
     override val layoutRes: Int = -1
 
-    private lateinit var viewList: List<CellView>
+    /* private lateinit var viewList: List<CellView> */
+
+    private var gameView: GameView? = null
 
     override fun createView(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): View =
-        GameView(requireContext())
+        GameView(requireContext()).also { view ->
+            view.id = R.id.game_view
+            gameView = view
+        }
+
+    override fun attachGameController(controller: GameController) {
+        gameView!!.attachGameController(controller)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        gameView = null
+    }
 
     /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -54,11 +70,11 @@ internal class GameFragment : BasePresenterFragment<GameFragmentView, GamePresen
         requireView().findViewById(id)
 
     override fun drawField(listOfCellsValues: List<Int>) {
-        viewList.forEachIndexed { index, cellView -> cellView.setValue(listOfCellsValues[index]) }
+        /*viewList.forEachIndexed { index, cellView -> cellView.setValue(listOfCellsValues[index]) }*/
     }
 
     override fun animateField(movedList: List<Int>) {
-        movedList.forEach { position -> viewList[position].animateGrowing() }
+        /*movedList.forEach { position -> viewList[position].animateGrowing() }*/
     }
 
     override fun createPresenter(): GamePresenter = GamePresenterImpl()

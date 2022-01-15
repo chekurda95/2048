@@ -5,35 +5,58 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import com.chekurda.common.storeIn
 import com.chekurda.common.surface.SurfaceDrawingThread
 import com.chekurda.common.surface.SurfaceLayout
 import com.chekurda.common.surface.SurfaceLayout.DrawingLayout
+import com.chekurda.game_2048.screens.game.data.models.game.GameState
+import com.chekurda.game_2048.screens.game.data.models.game.GameState.INIT
+import com.chekurda.game_2048.screens.game.data.models.game.GameState.START_NEW_GAME
+import com.chekurda.game_2048.screens.game.domain.GameController
+import com.chekurda.game_2048.screens.game.domain.GameController.GameControllerConnector
 import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig
 import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.GAME_FIELD_ROW_SIZE
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameBoard
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell.GameCell
+import io.reactivex.disposables.CompositeDisposable
 import java.lang.Math.random
 import java.lang.RuntimeException
 
 internal class GameFieldView(
     context: Context,
     attrs: AttributeSet? = null
-) : SurfaceView(context), DrawingLayout {
+) : SurfaceView(context), DrawingLayout, GameControllerConnector {
 
     private val board = GameBoard(context)
     private val cells = HashMap<Int, GameCell>()
+    private val allPositionList: List<Int> = mutableListOf<Int>().apply {
+        for (position in 0 until GAME_FIELD_ROW_SIZE * GAME_FIELD_ROW_SIZE) add(position)
+    }
+
+    private var gameController: GameController? = null
+    private var isSubscribed = false
+
+    private val gameState: GameState
+        get() = gameController?.state ?: INIT
+
+    private var missedGameState: GameState? = null
+
+    private var disposer = CompositeDisposable()
+        get() {
+            if (field.isDisposed) {
+                field = CompositeDisposable()
+            }
+            return field
+        }
 
     init {
         holder.addCallback(SurfaceCallback())
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val width = MeasureSpec.getSize(widthMeasureSpec)
-        val height = if (!isInEditMode) MeasureSpec.getSize(heightMeasureSpec) else width
-        setMeasuredDimension(width, height)
-
-        if (measuredWidth != measuredHeight) {
-            throw RuntimeException("Поле не квадратное: width = $measuredWidth, height = $measuredHeight")
+    private fun onGameStateChanged(state: GameState) {
+        when (state) {
+            START_NEW_GAME -> startNewGame()
+            else -> Unit
         }
     }
 
@@ -46,9 +69,15 @@ internal class GameFieldView(
         }
     }
 
-    fun startNewGame() {
-        cells.clear()
-        addNewCell()
+    private fun startNewGame() {
+        if (board.isReady) {
+            cells.clear()
+            addNewCell()
+
+            requireGameController().gameIsReady()
+        } else {
+            missedGameState = START_NEW_GAME
+        }
     }
 
     private fun addNewCell() {
@@ -67,9 +96,39 @@ internal class GameFieldView(
         }
     }
 
-    private val allPositionList: List<Int> = mutableListOf<Int>().apply {
-        for (i in 0 until GAME_FIELD_ROW_SIZE * GAME_FIELD_ROW_SIZE) {
-            add(i)
+    private fun subscribeOnState() {
+        if (!isSubscribed) {
+            gameController?.stateObservable
+                ?.subscribe(::onGameStateChanged)
+                ?.storeIn(disposer)
+        }
+    }
+
+    override fun attachGameController(controller: GameController) {
+        gameController = controller
+        subscribeOnState()
+    }
+
+    private fun requireGameController(): GameController =
+        gameController!!
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        subscribeOnState()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        disposer.dispose()
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val height = if (!isInEditMode) MeasureSpec.getSize(heightMeasureSpec) else width
+        setMeasuredDimension(width, height)
+
+        if (measuredWidth != measuredHeight) {
+            throw RuntimeException("Поле не квадратное: width = $measuredWidth, height = $measuredHeight")
         }
     }
 
@@ -86,7 +145,7 @@ internal class GameFieldView(
 
         override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
             board.setResolution(width, height)
-            startNewGame()
+            missedGameState?.let(::onGameStateChanged)
         }
 
         override fun surfaceDestroyed(holder: SurfaceHolder) {
