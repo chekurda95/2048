@@ -13,15 +13,17 @@ class SurfaceLayout(
         drawingLayout.update(deltaTimeMs)
     }
 
-    private var prevDrawTime = 0L
+    private var previousDrawTime = 0L
 
     fun performDrawing() {
         val canvas = surfaceHolder.lockCanvas()
         try {
             synchronized(surfaceHolder) {
-                val delta = System.currentTimeMillis() - prevDrawTime
-                prevDrawTime = System.currentTimeMillis()
-                Log.e("TAGTAG", "draw delta = $delta")
+                if (IS_DEBUG_DRAWING_TIME) {
+                    val delta = System.currentTimeMillis() - previousDrawTime
+                    previousDrawTime = System.currentTimeMillis()
+                    Log.e("TAGTAG", "drawLayout, deltaTime = $delta")
+                }
                 drawingLayout.drawLayout(canvas)
             }
         } catch (ex: Exception) {
@@ -38,3 +40,5 @@ class SurfaceLayout(
         fun drawLayout(canvas: Canvas)
     }
 }
+
+private const val IS_DEBUG_DRAWING_TIME = false
