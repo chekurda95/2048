@@ -4,5 +4,5 @@ internal object GameConfig {
 
     const val GAME_FPS = 60
     const val GAME_FIELD_ROW_SIZE = 4
-    const val CELL_SHOWING_DURATION_MS = 250
+    const val CELL_SHOWING_DURATION_MS = 240
 }

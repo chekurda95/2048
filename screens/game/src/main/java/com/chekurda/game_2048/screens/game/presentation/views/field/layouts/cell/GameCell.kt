@@ -46,6 +46,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
             }
         }
 
+    private var isShowingAnimation = false
     private var isShowingRunning = false
     private var showingAnimationTime = 0
     private var realTextSize = 0f
@@ -74,7 +75,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
     }
 
     fun animateShowing() {
-        isShowingRunning = true
+        isShowingAnimation = true
         showingAnimationTime = 0
         realTextSize = textPaint.textSize
         realRect = rect.copy()
@@ -82,9 +83,9 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
     }
 
     override fun update(deltaTime: Int) {
-        if (isShowingRunning) {
+        if (isShowingAnimation) {
             Log.e("TAGTAG", "delta $deltaTime")
-            showingAnimationTime += deltaTime
+            showingAnimationTime += if (isShowingRunning) deltaTime else 0
             val progress = minOf(showingAnimationTime.toFloat() / CELL_SHOWING_DURATION_MS, 1f)
             val interpolation = animationInterpolator.getInterpolation(progress)
 
@@ -98,7 +99,12 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
             Log.e("TAGTAG", "$rect")
             setRect(rect)
 
-            if (progress == 1f) isShowingRunning = false
+            isShowingRunning = true
+
+            if (progress == 1f) {
+                isShowingAnimation = false
+                isShowingRunning = false
+            }
         }
     }
 
