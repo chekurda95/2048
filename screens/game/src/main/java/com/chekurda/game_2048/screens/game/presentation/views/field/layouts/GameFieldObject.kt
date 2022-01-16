@@ -56,6 +56,8 @@ internal abstract class GameFieldObject(
         position = Position(position.x + x, position.y + y)
     }
 
+    open fun update(deltaTime: Int) = Unit
+
     abstract fun draw(canvas: Canvas)
 
     private fun updateRect() {

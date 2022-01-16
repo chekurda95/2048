@@ -62,7 +62,9 @@ internal class GameFieldView(
         }
     }
 
-    override fun update(deltaTimeMs: Int) = Unit
+    override fun update(deltaTimeMs: Int) {
+        cells.forEach { it.value.update(deltaTimeMs) }
+    }
 
     override fun drawLayout(canvas: Canvas) {
         board.draw(canvas)
@@ -94,6 +96,7 @@ internal class GameFieldView(
             cells[randomPosition] = GameCell(context).apply {
                 value = randomValue
                 setRect(board.getRectForCell(randomPosition))
+                animateShowing()
             }
         }
     }
