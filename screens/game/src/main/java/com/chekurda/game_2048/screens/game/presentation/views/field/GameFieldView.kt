@@ -14,8 +14,8 @@ import com.chekurda.game_2048.screens.game.data.models.game.GameState.INIT
 import com.chekurda.game_2048.screens.game.data.models.game.GameState.START_NEW_GAME
 import com.chekurda.game_2048.screens.game.domain.GameController
 import com.chekurda.game_2048.screens.game.domain.GameController.GameControllerConnector
-import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig
-import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.GAME_FIELD_ROW_SIZE
+import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.gameFPS
+import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.gameFieldRowSize
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameBoard
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell.GameCell
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.FieldRandomHelper.getRandomItem
@@ -33,7 +33,7 @@ internal class GameFieldView(
     private val board = GameBoard(context)
     private val cells = HashMap<Int, GameCell>()
     private val allPositionList: List<Int> = mutableListOf<Int>().apply {
-        for (position in 0 until GAME_FIELD_ROW_SIZE * GAME_FIELD_ROW_SIZE) add(position)
+        for (position in 0 until gameFieldRowSize * gameFieldRowSize) add(position)
     }
 
     private var gameController: GameController? = null
@@ -148,7 +148,7 @@ internal class GameFieldView(
         override fun surfaceCreated(holder: SurfaceHolder) {
             thread = SurfaceDrawingThread(
                 surfaceLayout = SurfaceLayout(this@GameFieldView, holder),
-                fps = GameConfig.GAME_FPS
+                fps = gameFPS
             ).apply { start() }
         }
 

@@ -10,7 +10,7 @@ import com.chekurda.design.custom_view_tools.utils.copy
 import com.chekurda.design.custom_view_tools.utils.toFloat
 import com.chekurda.design.custom_view_tools.utils.update
 import com.chekurda.game_2048.screens.game.R
-import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig
+import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.gameFieldRowSize
 import java.lang.RuntimeException
 import kotlin.math.roundToInt
 
@@ -48,19 +48,19 @@ internal class GameBoard(context: Context) : GameFieldObject(context) {
             bottom = cellSeparatorWidth + cellSize
         ).toFloat()
 
-        for (row in 0 until GameConfig.GAME_FIELD_ROW_SIZE) {
-            for (column in 0 until GameConfig.GAME_FIELD_ROW_SIZE) {
+        for (row in 0 until gameFieldRowSize) {
+            for (column in 0 until gameFieldRowSize) {
                 val left = previousCellRect.right + cellSeparatorWidth
                 val cellRect = previousCellRect.copy().update(
                     left = left,
                     right = left + cellSize
                 )
-                cellsPositions[column + row * GameConfig.GAME_FIELD_ROW_SIZE] = cellRect
+                cellsPositions[column + row * gameFieldRowSize] = cellRect
                 previousCellRect = cellRect.copy()
             }
 
             fun changePreviousRectForNewRow() {
-                val firstRectInRow = cellsPositions[row * GameConfig.GAME_FIELD_ROW_SIZE]!!
+                val firstRectInRow = cellsPositions[row * gameFieldRowSize]!!
                 val newPreviousTop = firstRectInRow.bottom + cellSeparatorWidth
                 previousCellRect = RectF().update(
                     top = newPreviousTop,
@@ -75,8 +75,8 @@ internal class GameBoard(context: Context) : GameFieldObject(context) {
     }
 
     private fun getCellSize(): Int {
-        val separatorsSumWidth = cellSeparatorWidth * (GameConfig.GAME_FIELD_ROW_SIZE + 1)
-        val cellSize = (width - separatorsSumWidth) / GameConfig.GAME_FIELD_ROW_SIZE.toFloat()
+        val separatorsSumWidth = cellSeparatorWidth * (gameFieldRowSize + 1)
+        val cellSize = (width - separatorsSumWidth) / gameFieldRowSize.toFloat()
         return maxOf(cellSize, 0f).roundToInt()
     }
 

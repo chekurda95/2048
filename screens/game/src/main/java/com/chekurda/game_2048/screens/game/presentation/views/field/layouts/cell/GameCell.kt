@@ -15,7 +15,8 @@ import com.chekurda.design.custom_view_tools.utils.AntiTextPaint
 import com.chekurda.design.custom_view_tools.utils.copy
 import com.chekurda.design.custom_view_tools.utils.scale
 import com.chekurda.game_2048.screens.game.R
-import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.CELL_SHOWING_DURATION_MS
+import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig
+import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.cellShowingDuration
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameFieldObject
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.AutoTextSizeHelper.calculateTextSize
 import org.apache.commons.lang3.StringUtils
@@ -62,7 +63,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
             alpha = if (value) MAX_ALPHA else 0
         }
 
-    private val showingAnimation = ShowingAnimation(CELL_SHOWING_DURATION_MS)
+    private val showingAnimation = ShowingAnimation(cellShowingDuration)
 
     init {
         isVisible = false
