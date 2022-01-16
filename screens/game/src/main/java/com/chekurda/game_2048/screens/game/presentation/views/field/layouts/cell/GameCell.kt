@@ -96,6 +96,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
             )
             rect.set(animatedRect)
             updateTextPosition()
+            if (!isShowingRunning) isVisible = true
 
             isShowingRunning = true
 

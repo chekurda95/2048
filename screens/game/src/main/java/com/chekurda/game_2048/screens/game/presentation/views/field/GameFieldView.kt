@@ -18,8 +18,9 @@ import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameC
 import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.GAME_FIELD_ROW_SIZE
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameBoard
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell.GameCell
+import com.chekurda.game_2048.screens.game.presentation.views.field.utils.FieldRandomHelper.getRandomItem
+import com.chekurda.game_2048.screens.game.presentation.views.field.utils.FieldRandomHelper.randomValue
 import io.reactivex.disposables.CompositeDisposable
-import java.lang.Math.random
 import java.lang.RuntimeException
 
 internal class GameFieldView(
@@ -77,6 +78,7 @@ internal class GameFieldView(
         if (board.isReady) {
             cells.clear()
             addNewCell()
+            addNewCell()
 
             requireGameController().gameIsReady()
         } else {
@@ -84,22 +86,24 @@ internal class GameFieldView(
         }
     }
 
-    private fun addNewCell() {
-        val emptyPositions = allPositionList.toMutableList()
-        cells.forEach {
-            emptyPositions.remove(it.key)
-        }
-        if (emptyPositions.isNotEmpty()) {
-            val randomPosition = ((random() * 100).toInt() % emptyPositions.size)
-            val randomValue = ((random() * 100).toInt() % 2 + 1) * 2
-
-            cells[randomPosition] = GameCell(context).apply {
+    /**
+     * Добавляет новую ячейку на поле и возвращает true.
+     * Если все ячейки заняты - возвращает false.
+     */
+    private fun addNewCell(): Boolean =
+        getRandomItem(getEmptyPositions())?.let { emptyPosition ->
+            cells[emptyPosition] = GameCell(context).apply {
                 value = randomValue
-                setRect(board.getRectForCell(randomPosition))
+                setRect(board.getRectForCell(emptyPosition))
                 animateShowing()
             }
+            true
+        } ?: false
+
+    private fun getEmptyPositions(): List<Int> =
+        allPositionList.toMutableList().apply {
+            cells.forEach { remove(it.key) }
         }
-    }
 
     private fun subscribeOnState() {
         if (!isSubscribed) {
