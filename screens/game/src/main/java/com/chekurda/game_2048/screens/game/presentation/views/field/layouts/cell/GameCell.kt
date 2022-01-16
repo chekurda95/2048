@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Paint.Style.STROKE
 import android.graphics.Rect
 import android.graphics.RectF
-import android.util.Log
 import android.view.animation.LinearInterpolator
 import androidx.annotation.IntRange
 import androidx.core.content.ContextCompat.getColor
@@ -84,26 +83,26 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
 
     override fun update(deltaTime: Int) {
         if (isShowingAnimation) {
-            Log.e("TAGTAG", "delta $deltaTime")
             showingAnimationTime += if (isShowingRunning) deltaTime else 0
             val progress = minOf(showingAnimationTime.toFloat() / CELL_SHOWING_DURATION_MS, 1f)
             val interpolation = animationInterpolator.getInterpolation(progress)
 
-            alpha = getInterpolatedValue(0.7f * MAX_ALPHA, MAX_ALPHA.toFloat(), interpolation).toInt()
-            val rect = RectF(
+            textPaint.textSize = getInterpolatedValue(realTextSize / 2, realTextSize, interpolation)
+            val animatedRect = RectF(
                 getInterpolatedValue(showingStartRect.left, realRect.left, interpolation),
                 getInterpolatedValue(showingStartRect.top, realRect.top, interpolation),
                 getInterpolatedValue(showingStartRect.right, realRect.right, interpolation),
                 getInterpolatedValue(showingStartRect.bottom, realRect.bottom, interpolation)
             )
-            Log.e("TAGTAG", "$rect")
-            setRect(rect)
+            rect.set(animatedRect)
+            updateTextPosition()
 
             isShowingRunning = true
 
             if (progress == 1f) {
                 isShowingAnimation = false
                 isShowingRunning = false
+                updateText()
             }
         }
     }
@@ -133,10 +132,10 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
             textPaint.getTextBounds(params.value, 0, params.value.length, it)
         }
         // Рассчет координат для отрисовки текста по центру ячейки
-        val left = width.half - textBounds.width().half - textBounds.left
-        val top = height.half + textBounds.height().half - textBounds.bottom
+        val left = rect.width().half - textBounds.width().half - textBounds.left
+        val top = rect.height().half + textBounds.height().half - textBounds.bottom
 
-        textPos = left.toFloat() to top.toFloat()
+        textPos = left to top
     }
 
     override fun setResolution(width: Int, height: Int) {
@@ -166,8 +165,8 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
     private fun drawValue(canvas: Canvas) {
         canvas.drawText(
             params.value,
-            position.x + textPos.first,
-            position.y + textPos.second,
+            rect.left + textPos.first,
+            rect.top + textPos.second,
             textPaint
         )
     }
