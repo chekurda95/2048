@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint.Style.STROKE
 import android.graphics.Rect
 import android.graphics.RectF
+import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
 import androidx.annotation.IntRange
 import androidx.core.content.ContextCompat.getColor
@@ -21,6 +22,8 @@ import org.apache.commons.lang3.StringUtils
 import java.lang.RuntimeException
 
 internal class GameCell(context: Context) : GameFieldObject(context) {
+
+    private var params = CellParams()
 
     private val textPaint = AntiTextPaint().apply {
         isFakeBoldText = true
@@ -45,16 +48,6 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
             }
         }
 
-    private var isShowingAnimation = false
-    private var isShowingRunning = false
-    private var showingAnimationTime = 0
-    private var realTextSize = 0f
-    private var realRect = RectF()
-    private var showingStartRect = realRect
-    private var animationInterpolator = LinearInterpolator()
-
-    private var params = CellParams()
-
     var value: Int = 0
         set(value) {
             if (field == value) return
@@ -69,42 +62,19 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
             alpha = if (value) MAX_ALPHA else 0
         }
 
+    private val showingAnimation = ShowingAnimation(CELL_SHOWING_DURATION_MS)
+
     init {
         isVisible = false
     }
 
     fun animateShowing() {
-        isShowingAnimation = true
-        showingAnimationTime = 0
-        realTextSize = textPaint.textSize
-        realRect = rect.copy()
-        showingStartRect = realRect.copy().scale(0.5f)
+        showingAnimation.start()
     }
 
     override fun update(deltaTime: Int) {
-        if (isShowingAnimation) {
-            showingAnimationTime += if (isShowingRunning) deltaTime else 0
-            val progress = minOf(showingAnimationTime.toFloat() / CELL_SHOWING_DURATION_MS, 1f)
-            val interpolation = animationInterpolator.getInterpolation(progress)
-
-            textPaint.textSize = getInterpolatedValue(realTextSize / 2, realTextSize, interpolation)
-            val animatedRect = RectF(
-                getInterpolatedValue(showingStartRect.left, realRect.left, interpolation),
-                getInterpolatedValue(showingStartRect.top, realRect.top, interpolation),
-                getInterpolatedValue(showingStartRect.right, realRect.right, interpolation),
-                getInterpolatedValue(showingStartRect.bottom, realRect.bottom, interpolation)
-            )
-            rect.set(animatedRect)
-            updateTextPosition()
-            if (!isShowingRunning) isVisible = true
-
-            isShowingRunning = true
-
-            if (progress == 1f) {
-                isShowingAnimation = false
-                isShowingRunning = false
-                updateText()
-            }
+        if (showingAnimation.isRunning) {
+            showingAnimation.update(deltaTime)
         }
     }
 
@@ -172,8 +142,68 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
         )
     }
 
-    private fun getInterpolatedValue(fromValue: Float, toValue: Float, interpolation: Float) =
-        fromValue + (toValue - fromValue) * interpolation
+    private inner class ShowingAnimation(
+        private val duration: Int,
+        private val interpolator: Interpolator = LinearInterpolator(),
+        private val scale: Float = 0.5f
+    ) {
+
+        private var animationTime = 0
+        private var isStarted = false
+
+        private var textSize = 0f
+        private var endRect = RectF()
+        private var startRect = rect
+
+        var isRunning: Boolean = false
+            private set
+
+        private fun init() {
+            animationTime = 0
+            textSize = textPaint.textSize
+            endRect = this@GameCell.rect.copy()
+            startRect = endRect.copy().scale(scale)
+        }
+
+        fun start() {
+            isRunning = true
+            init()
+        }
+
+        fun update(deltaTime: Int) {
+            animationTime += if (isStarted) deltaTime else 0
+            val progress = minOf(animationTime.toFloat() / duration, 1f)
+            val interpolation = interpolator.getInterpolation(progress)
+
+            textPaint.textSize = getInterpolatedValue(textSize * scale, textSize, interpolation)
+            rect.set(
+                RectF(
+                    getInterpolatedValue(startRect.left, endRect.left, interpolation),
+                    getInterpolatedValue(startRect.top, endRect.top, interpolation),
+                    getInterpolatedValue(startRect.right, endRect.right, interpolation),
+                    getInterpolatedValue(startRect.bottom, endRect.bottom, interpolation)
+                )
+            )
+            updateTextPosition()
+            if (!isStarted) isVisible = true
+
+            if (progress == 1f) {
+                isRunning = false
+                isStarted = false
+                updateText()
+            } else if (progress == 0f) {
+                isStarted = true
+            }
+        }
+
+        fun cancel() {
+            if (!isRunning) return
+            update(duration)
+        }
+
+        private fun getInterpolatedValue(fromValue: Float, toValue: Float, interpolation: Float) =
+            fromValue + (toValue - fromValue) * interpolation
+    }
 }
 
 private const val MAX_ALPHA = 255
