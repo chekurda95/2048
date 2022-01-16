@@ -2,6 +2,7 @@ package com.chekurda.design.custom_view_tools.utils
 
 import android.graphics.Rect
 import android.graphics.RectF
+import com.chekurda.common.half
 
 /**
  * Обновить позиции [Rect]
@@ -58,3 +59,18 @@ fun Rect.copy() = Rect(this)
  * Копирование [RectF] в новый объект
  */
 fun RectF.copy() = RectF(this)
+
+/**
+ * Масштабирование [RectF] относительно центра
+ */
+fun RectF.scale(value: Float): RectF {
+    val scaledWidthHalf = width().half * value
+    val scaledHeightHalf = height().half * value
+    val center = centerX() to centerY()
+    return update(
+        center.first - scaledWidthHalf,
+        center.second - scaledHeightHalf,
+        center.first + scaledWidthHalf,
+        center.second + scaledHeightHalf
+    )
+}
