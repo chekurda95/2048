@@ -16,8 +16,10 @@ class SurfaceDrawingThread(
 
         previousTimeMs = System.currentTimeMillis()
         while (isRunning) {
-            surfaceLayout.update((System.currentTimeMillis() - previousTimeMs).toInt())
+            val delta = (System.currentTimeMillis() - previousTimeMs).toInt()
             if (drawingHelper.isTimeToDraw) {
+                surfaceLayout.update(delta)
+                previousTimeMs = System.currentTimeMillis()
                 surfaceLayout.performDrawing()
             }
         }
