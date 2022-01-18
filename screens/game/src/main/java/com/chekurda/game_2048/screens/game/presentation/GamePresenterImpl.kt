@@ -2,10 +2,9 @@ package com.chekurda.game_2048.screens.game.presentation
 
 import com.chekurda.common.base_fragment.BasePresenterImpl
 import com.chekurda.game_2048.screens.game.data.models.game.Game
-import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeDirection
-import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeDirection.*
+import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeDirection
+import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeDirection.*
 import com.chekurda.common.storeIn
-import com.chekurda.game_2048.screens.game.data.models.game.GameState
 import com.chekurda.game_2048.screens.game.data.models.game.GameState.INIT
 import com.chekurda.game_2048.screens.game.domain.GameController
 import io.reactivex.Observable

@@ -9,15 +9,12 @@ import com.chekurda.common.base_fragment.BasePresenterFragment
 import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.contract.GameFragmentFactory
 import com.chekurda.game_2048.screens.game.domain.GameController
-import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeControllerDelegate
-import com.chekurda.game_2048.screens.game.presentation.delegates.SwipeDelegate
 import com.chekurda.game_2048.screens.game.presentation.views.GameView
 import com.chekurda.game_2048.screens.game.presentation.views.cell.CellView
 
 @SuppressLint("ClickableViewAccessibility")
 internal class GameFragment : BasePresenterFragment<GameFragmentView, GamePresenter>(),
-    GameFragmentView,
-    SwipeDelegate by SwipeControllerDelegate() {
+    GameFragmentView {
 
     companion object : GameFragmentFactory {
 

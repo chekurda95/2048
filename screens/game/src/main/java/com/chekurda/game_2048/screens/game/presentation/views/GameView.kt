@@ -7,18 +7,17 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Button
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import com.chekurda.common.half
-import com.chekurda.design.custom_view_tools.utils.MeasureSpecUtils
 import com.chekurda.design.custom_view_tools.utils.MeasureSpecUtils.makeUnspecifiedSpec
 import com.chekurda.design.custom_view_tools.utils.dp
 import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.domain.GameController
 import com.chekurda.game_2048.screens.game.domain.GameController.GameControllerConnector
 import com.chekurda.game_2048.screens.game.presentation.views.field.GameFieldView
+import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeHelper
 
 internal class GameView(
     context: Context,
@@ -33,6 +32,7 @@ internal class GameView(
 
     private val fieldView = GameFieldView(context)
     private val fieldPadding = context.dp(10)
+    private val swipeHelper = SwipeHelper(context, fieldView)
 
     private val startNewGameButton = Button(context).apply {
         text = "Start new game"
@@ -50,6 +50,7 @@ internal class GameView(
         addView(fieldView)
         addView(startNewGameButton)
 
+        setOnTouchListener(swipeHelper)
         startNewGameButton.setOnClickListener {
             gameController.startNewGame()
         }

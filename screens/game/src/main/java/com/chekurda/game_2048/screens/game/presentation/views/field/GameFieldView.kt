@@ -20,6 +20,8 @@ import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.Game
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell.GameCell
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.FieldRandomHelper.getRandomItem
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.FieldRandomHelper.randomValue
+import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeDirection
+import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeListener
 import io.reactivex.disposables.CompositeDisposable
 import java.lang.RuntimeException
 
@@ -28,7 +30,8 @@ internal class GameFieldView(
     attrs: AttributeSet? = null
 ) : SurfaceView(context),
     DrawingLayout,
-    GameControllerConnector {
+    GameControllerConnector,
+    SwipeListener {
 
     private val board = GameBoard(context)
     private val cells = HashMap<Int, GameCell>()
@@ -111,6 +114,10 @@ internal class GameFieldView(
                 ?.subscribe(::onGameStateChanged)
                 ?.storeIn(disposer)
         }
+    }
+
+    override fun onSwipe(direction: SwipeDirection) {
+        TODO("Not yet implemented")
     }
 
     override fun attachGameController(controller: GameController) {
