@@ -2,6 +2,7 @@ package com.chekurda.game_2048.screens.game.presentation.views.field
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -31,13 +32,18 @@ internal class GameFieldView(
 ) : SurfaceView(context),
     DrawingLayout,
     GameControllerConnector,
-    SwipeListener {
+    SwipeListener,
+    SwipeController.CellsHolder {
 
     private val board = GameBoard(context)
-    private val cells = HashMap<Int, GameCell>()
     private val allPositionList: List<Int> = mutableListOf<Int>().apply {
         for (position in 0 until gameFieldRowSize * gameFieldRowSize) add(position)
     }
+
+    override val cells = HashMap<Int, GameCell>()
+
+    override fun getRectOfPosition(position: Int): RectF =
+        board.getRectForCell(position)
 
     private var gameController: GameController? = null
     private var isSubscribed = false
@@ -46,6 +52,8 @@ internal class GameFieldView(
         get() = gameController?.state ?: INIT
 
     private var missedGameState: GameState? = null
+
+    private val swipeController = SwipeController(this)
 
     private var disposer = CompositeDisposable()
         get() {
@@ -67,6 +75,7 @@ internal class GameFieldView(
     }
 
     override fun update(deltaTimeMs: Int) {
+        swipeController.update(deltaTimeMs)
         cells.forEach { it.value.update(deltaTimeMs) }
     }
 
@@ -78,6 +87,8 @@ internal class GameFieldView(
     }
 
     private fun startNewGame() {
+        swipeController.stopMoving()
+
         if (board.isReady) {
             cells.clear()
             addNewCell()
@@ -108,25 +119,18 @@ internal class GameFieldView(
             cells.forEach { remove(it.key) }
         }
 
-    private fun subscribeOnState() {
-        if (!isSubscribed) {
-            gameController?.stateObservable
-                ?.subscribe(::onGameStateChanged)
-                ?.storeIn(disposer)
-        }
+    private fun getCell(x: Int, y: Int) {
+        cells[gameFieldRowSize * y + x]
     }
 
     override fun onSwipe(direction: SwipeDirection) {
-        TODO("Not yet implemented")
+        swipeController.onSwipe(direction)
     }
 
     override fun attachGameController(controller: GameController) {
         gameController = controller
         subscribeOnState()
     }
-
-    private fun requireGameController(): GameController =
-        gameController!!
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -137,6 +141,17 @@ internal class GameFieldView(
         super.onDetachedFromWindow()
         disposer.dispose()
     }
+
+    private fun subscribeOnState() {
+        if (!isSubscribed) {
+            gameController?.stateObservable
+                ?.subscribe(::onGameStateChanged)
+                ?.storeIn(disposer)
+        }
+    }
+
+    private fun requireGameController(): GameController =
+        gameController!!
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = MeasureSpec.getSize(widthMeasureSpec)

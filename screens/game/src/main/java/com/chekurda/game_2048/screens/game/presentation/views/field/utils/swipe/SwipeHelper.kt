@@ -21,9 +21,8 @@ internal class SwipeHelper(
 
     private val gestureDetector = GestureDetector(context, object : SimpleOnGestureListener() {
 
-        override fun onDown(event: MotionEvent): Boolean = true.also {
-            isSwipeRunning = false
-        }
+        override fun onDown(event: MotionEvent): Boolean =
+            true.also { isSwipeRunning = true }
 
         override fun onScroll(
             eventDown: MotionEvent,

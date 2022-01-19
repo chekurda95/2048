@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.annotation.CallSuper
 import com.chekurda.design.custom_view_tools.utils.AntiPaint
-import com.chekurda.design.custom_view_tools.utils.copy
 
 /**
  * Общая реализация объектов игрового поля
@@ -20,11 +19,23 @@ internal abstract class GameFieldObject(
     protected var rect = RectF()
         private set
 
-    protected var width: Int = 0
+    var width: Int = 0
         private set
 
-    protected var height: Int = 0
+    var height: Int = 0
         private set
+
+    val left: Float
+        get() = rect.left
+
+    val top: Float
+        get() = rect.top
+
+    val right: Float
+        get() = rect.right
+
+    val bottom: Float
+        get() = rect.bottom
 
     var position = Position()
         set(value) {
