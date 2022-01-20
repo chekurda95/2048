@@ -16,8 +16,6 @@
     <color name="cell_text_color_gray">@color/gray</color>
     <color name="cell_text_color_white">@color/white</color>
 
-    <color name="cell_border_color">#CDC2B4</color>
-
     <!-- Cell background color -->
     <color name="cell_background_color_2">#EEE4DA</color>
     <color name="cell_background_color_4">#ECE0C8</color>

@@ -31,14 +31,9 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
     }
     private var textPos = 0f to 0f
 
-    private val borderPaint = AntiPaint().apply {
-        color = getColor(context, R.color.cell_border_color)
-        style = STROKE
-        strokeWidth = resources.getDimensionPixelSize(R.dimen.cell_stroke_width).toFloat()
-    }
     private val borderRadius = resources.getDimensionPixelSize(R.dimen.cell_corner_radius).toFloat()
 
-    private val paints = listOf(textPaint, borderPaint, backgroundPaint)
+    private val paints = listOf(textPaint, backgroundPaint)
 
     @IntRange(from = 0, to = MAX_ALPHA.toLong())
     private var alpha: Int = 0
@@ -128,10 +123,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
     }
 
     private fun drawBackground(canvas: Canvas) {
-        canvas.run {
-            drawRoundRect(rect, borderRadius, borderRadius, backgroundPaint)
-            drawRoundRect(rect, borderRadius, borderRadius, borderPaint)
-        }
+        canvas.drawRoundRect(rect, borderRadius, borderRadius, backgroundPaint)
     }
 
     private fun drawValue(canvas: Canvas) {
