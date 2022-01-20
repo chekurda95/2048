@@ -17,6 +17,7 @@ import com.chekurda.game_2048.screens.game.domain.GameController
 import com.chekurda.game_2048.screens.game.domain.GameController.GameControllerConnector
 import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.gameFPS
 import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.gameFieldRowSize
+import com.chekurda.game_2048.screens.game.presentation.views.field.domain.SwipeController
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameBoard
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell.GameCell
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.FieldRandomHelper.getRandomItem
@@ -33,7 +34,7 @@ internal class GameFieldView(
     DrawingLayout,
     GameControllerConnector,
     SwipeListener,
-    SwipeController.CellsHolder {
+    SwipeController.CellsProvider {
 
     private val board = GameBoard(context)
     private val allPositionList: List<Int> = mutableListOf<Int>().apply {
@@ -42,7 +43,7 @@ internal class GameFieldView(
 
     override val cells = HashMap<Int, GameCell>()
 
-    override fun getRectOfPosition(position: Int): RectF =
+    override fun getRectForPosition(position: Int): RectF =
         board.getRectForCell(position)
 
     private var gameController: GameController? = null
@@ -53,7 +54,9 @@ internal class GameFieldView(
 
     private var missedGameState: GameState? = null
 
-    private val swipeController = SwipeController(this)
+    private val swipeController = SwipeController(this).apply {
+        swipeFinishedListener = ::onSwipeFinished
+    }
 
     private var disposer = CompositeDisposable()
         get() {
@@ -119,12 +122,12 @@ internal class GameFieldView(
             cells.forEach { remove(it.key) }
         }
 
-    private fun getCell(x: Int, y: Int) {
-        cells[gameFieldRowSize * y + x]
-    }
-
     override fun onSwipe(direction: SwipeDirection) {
         swipeController.onSwipe(direction)
+    }
+
+    private fun onSwipeFinished() {
+        addNewCell()
     }
 
     override fun attachGameController(controller: GameController) {
