@@ -126,8 +126,8 @@ internal class GameFieldView(
         swipeController.onSwipe(direction)
     }
 
-    private fun onSwipeFinished() {
-        addNewCell()
+    private fun onSwipeFinished(isChanged: Boolean) {
+        if (isChanged) addNewCell()
     }
 
     override fun attachGameController(controller: GameController) {

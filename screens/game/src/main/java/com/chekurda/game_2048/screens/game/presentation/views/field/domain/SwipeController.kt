@@ -15,9 +15,10 @@ internal class SwipeController(private val cellsHolder: CellsProvider) : SwipeLi
         fun getRectForPosition(position: Int): RectF
     }
 
-    var swipeFinishedListener: (() -> Unit)? = null
+    var swipeFinishedListener: ((Boolean) -> Unit)? = null
 
     private var isRunning: Boolean = false
+    private var isChanged: Boolean = false
     private var swipeDirection: SwipeDirection? = null
     private val movingCells: MutableList<MovingCell> = mutableListOf()
 
@@ -130,10 +131,14 @@ internal class SwipeController(private val cellsHolder: CellsProvider) : SwipeLi
             }
         }
         movingCells.removeAll(finishedCells)
-        if (!isFieldChanged) {
+
+        if (isFieldChanged) {
+            isChanged = true
+        } else {
             this.swipeDirection = null
             isRunning = false
-            swipeFinishedListener?.invoke()
+            swipeFinishedListener?.invoke(isChanged)
+            isChanged = false
         }
     }
 
