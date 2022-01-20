@@ -2,21 +2,20 @@ package com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cel
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Paint.Style.STROKE
 import android.graphics.Rect
 import android.graphics.RectF
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
+import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
-import androidx.core.content.ContextCompat.getColor
 import com.chekurda.common.half
-import com.chekurda.design.custom_view_tools.utils.AntiPaint
 import com.chekurda.design.custom_view_tools.utils.AntiTextPaint
 import com.chekurda.design.custom_view_tools.utils.copy
 import com.chekurda.design.custom_view_tools.utils.scale
 import com.chekurda.game_2048.screens.game.R
-import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig
 import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.cellShowingDuration
+import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.cellSumDuration
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameFieldObject
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.AutoTextSizeHelper.calculateTextSize
 import org.apache.commons.lang3.StringUtils
@@ -48,7 +47,6 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
         set(value) {
             if (field == value) return
             field = value
-
             updateCell(value)
         }
 
@@ -59,6 +57,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
         }
 
     private val showingAnimation = ShowingAnimation(cellShowingDuration)
+    private val sumAnimation = SumAnimation(cellSumDuration)
 
     init {
         isVisible = false
@@ -68,9 +67,15 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
         showingAnimation.start()
     }
 
+    fun animateSum() {
+        value *= 2
+        sumAnimation.start()
+    }
+
     override fun update(deltaTime: Int) {
-        if (showingAnimation.isRunning) {
-            showingAnimation.update(deltaTime)
+        when {
+            showingAnimation.isRunning -> showingAnimation.update(deltaTime)
+            sumAnimation.isRunning -> sumAnimation.update(deltaTime)
         }
     }
 
@@ -165,33 +170,104 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
 
         fun update(deltaTime: Int) {
             animationTime += if (isStarted) deltaTime else 0
-            val progress = minOf(animationTime.toFloat() / duration, 1f)
-            val interpolation = interpolator.getInterpolation(progress)
+            val timeProgress = minOf(animationTime.toFloat() / duration, 1f)
+            val interpolation = interpolator.getInterpolation(timeProgress)
 
-            textPaint.textSize = getInterpolatedValue(textSize * scale, textSize, interpolation)
-            rect.set(
-                RectF(
-                    getInterpolatedValue(startRect.left, endRect.left, interpolation),
-                    getInterpolatedValue(startRect.top, endRect.top, interpolation),
-                    getInterpolatedValue(startRect.right, endRect.right, interpolation),
-                    getInterpolatedValue(startRect.bottom, endRect.bottom, interpolation)
-                )
-            )
-            updateTextPosition()
+            setAnimationProgress(interpolation)
+
             if (!isStarted) isVisible = true
 
-            if (progress == 1f) {
+            if (timeProgress == 1f) {
                 isRunning = false
                 isStarted = false
                 updateText()
-            } else if (progress == 0f) {
+            } else if (timeProgress == 0f) {
                 isStarted = true
             }
         }
 
         fun cancel() {
             if (!isRunning) return
-            update(duration)
+            isRunning = false
+            isStarted = false
+            setAnimationProgress(1f)
+        }
+
+        private fun setAnimationProgress(@FloatRange(from = 0.0, to = 1.0) progress: Float) {
+            textPaint.textSize = getInterpolatedValue(textSize * scale, textSize, progress)
+            rect.set(
+                RectF(
+                    getInterpolatedValue(startRect.left, endRect.left, progress),
+                    getInterpolatedValue(startRect.top, endRect.top, progress),
+                    getInterpolatedValue(startRect.right, endRect.right, progress),
+                    getInterpolatedValue(startRect.bottom, endRect.bottom, progress)
+                )
+            )
+            updateTextPosition()
+        }
+
+        private fun getInterpolatedValue(fromValue: Float, toValue: Float, interpolation: Float) =
+            fromValue + (toValue - fromValue) * interpolation
+    }
+
+    private inner class SumAnimation(
+        private val duration: Int,
+        private val interpolator: Interpolator = DecelerateInterpolator(1.2f),
+        private val scale: Float = 1.2f
+    ) {
+
+        private var animationTime = 0
+
+        private var textSize = 0f
+        private var endRect = RectF()
+        private var startRect = rect
+
+        var isRunning: Boolean = false
+            private set
+
+        private fun init() {
+            animationTime = 0
+            textSize = textPaint.textSize
+            startRect = this@GameCell.rect.copy()
+            endRect = startRect.copy().scale(scale)
+        }
+
+        fun start() {
+            isRunning = true
+            init()
+        }
+
+        fun update(deltaTime: Int) {
+            animationTime += deltaTime
+            val timeProgress = animationTime.toFloat() / duration
+            val animationProgress = minOf(timeProgress, 1f)
+            val interpolation = interpolator.getInterpolation(animationProgress)
+
+            setAnimationProgress(interpolation)
+
+            if (timeProgress > 1) {
+                isRunning = false
+                setAnimationProgress(0f)
+            }
+        }
+
+        fun cancel() {
+            if (!isRunning) return
+            isRunning = false
+            updateCell(0)
+        }
+
+        private fun setAnimationProgress(@FloatRange(from = 0.0, to = 1.0) progress: Float) {
+            textPaint.textSize = getInterpolatedValue(textSize, textSize * scale, progress)
+            rect.set(
+                RectF(
+                    getInterpolatedValue(startRect.left, endRect.left, progress),
+                    getInterpolatedValue(startRect.top, endRect.top, progress),
+                    getInterpolatedValue(startRect.right, endRect.right, progress),
+                    getInterpolatedValue(startRect.bottom, endRect.bottom, progress)
+                )
+            )
+            updateTextPosition()
         }
 
         private fun getInterpolatedValue(fromValue: Float, toValue: Float, interpolation: Float) =

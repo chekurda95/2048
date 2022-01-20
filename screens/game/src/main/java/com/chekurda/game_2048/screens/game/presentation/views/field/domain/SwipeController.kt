@@ -125,7 +125,7 @@ internal class SwipeController(private val cellsHolder: CellsProvider) : SwipeLi
                 if (sumCell == null) {
                     cellsHolder.cells[movingCell.endPosition] = movingCell.cell
                 } else {
-                    sumCell.value = sumCell.value * 2
+                    sumCell.animateSum()
                 }
 
                 finishedCells.add(movingCell)

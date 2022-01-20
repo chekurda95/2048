@@ -10,8 +10,12 @@ internal object GameConfig {
 
     var cellShowingDuration = DEFAULT_CELL_SHOWING_DURATION_MS
         private set
+
+    var cellSumDuration = DEFAULT_CELL_SUM_DURATION_MS
+        private set
 }
 
 private const val DEFAULT_GAME_FPS = 60
 private const val DEFAULT_GAME_FIELD_ROW_SIZE = 4
 private const val DEFAULT_CELL_SHOWING_DURATION_MS = 240
+private const val DEFAULT_CELL_SUM_DURATION_MS = 200
