@@ -178,9 +178,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
             if (!isStarted) isVisible = true
 
             if (timeProgress == 1f) {
-                isRunning = false
-                isStarted = false
-                updateText()
+                cancel()
             } else if (timeProgress == 0f) {
                 isStarted = true
             }
@@ -245,16 +243,14 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
 
             setAnimationProgress(interpolation)
 
-            if (timeProgress > 1) {
-                isRunning = false
-                setAnimationProgress(0f)
-            }
+            if (timeProgress > 1) cancel()
         }
 
         fun cancel() {
             if (!isRunning) return
             isRunning = false
-            updateCell(0)
+            setAnimationProgress(0f)
+            alpha = MAX_ALPHA
         }
 
         private fun setAnimationProgress(@FloatRange(from = 0.0, to = 1.0) progress: Float) {
@@ -267,6 +263,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
                     getInterpolatedValue(startRect.bottom, endRect.bottom, progress)
                 )
             )
+            alpha = getInterpolatedValue(0.7f * MAX_ALPHA, MAX_ALPHA.toFloat(), progress).toInt()
             updateTextPosition()
         }
 
