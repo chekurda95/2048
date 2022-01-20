@@ -60,16 +60,16 @@ internal class SwipeController(private val cellsHolder: CellsProvider) : SwipeLi
                 return
             }
 
-            val endPosition = emptyPositionList
-                .firstOrNull()
-                ?.also {
-                    emptyPositionList.remove(it)
-                    emptyPositionList.add(position)
-                } ?: position
-            val endPoint = cellsHolder.getRectForPosition(endPosition)
             val sumWith = previousCell
                 ?.takeIf { it.cell.value == cellOnPosition.value && it.sumWithCell == null }
                 ?.cell
+            val endPosition = emptyPositionList
+                .firstOrNull()
+                ?.also {
+                    if (sumWith == null) emptyPositionList.remove(it)
+                    emptyPositionList.add(position)
+                } ?: position
+            val endPoint = cellsHolder.getRectForPosition(endPosition)
 
             val movingCell = MovingCell(
                 cellOnPosition,
