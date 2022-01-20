@@ -20,45 +20,52 @@ internal class SwipeController(private val cellsHolder: CellsHolder) : SwipeList
     private fun updateMovingList() {
         movingCells.clear()
 
-        if (swipeDirection == SwipeDirection.RIGHT) {
-            val cells: MutableList<MovingCell> = mutableListOf()
-            for (row in 0 until gameFieldRowSize) {
-                val emptyPositionList = mutableListOf<Int>()
-                var previousCell: MovingCell? = null
-
-                for (column in gameFieldRowSize - 1 downTo 0) {
-                    val position = getPosition(row, column)
-                    val cellOnPosition = cellsHolder.cells[position]
-
-                    if (cellOnPosition == null) {
-                        emptyPositionList.add(position)
-                        continue
-                    }
-
-                    val endPosition = emptyPositionList
-                        .firstOrNull()
-                        ?.also {
-                            emptyPositionList.remove(it)
-                            emptyPositionList.add(position)
-                        } ?: position
-                    val endPoint = cellsHolder.getRectOfPosition(endPosition)
-                    val sumWith = previousCell
-                        ?.takeIf { it.cell.value == cellOnPosition.value }
-                        ?.cell
-
-                    val movingCell = MovingCell(
-                        cellOnPosition,
-                        position,
-                        endPosition,
-                        endPoint,
-                        sumWith
-                    )
-                    cells.add(movingCell)
-                    previousCell = movingCell
-                }
-            }
-            movingCells.addAll(cells)
+        val isHorizontalSwipe = swipeDirection == SwipeDirection.LEFT || swipeDirection == SwipeDirection.RIGHT
+        val (rowRange, columnRange) = when (swipeDirection) {
+            SwipeDirection.LEFT -> (0 until gameFieldRowSize) to (0 until gameFieldRowSize)
+            SwipeDirection.UP -> (0 until gameFieldRowSize) to (0 until gameFieldRowSize)
+            SwipeDirection.RIGHT -> (0 until gameFieldRowSize) to (gameFieldRowSize - 1 downTo 0)
+            SwipeDirection.DOWN -> (gameFieldRowSize - 1 downTo 0) to (0 until gameFieldRowSize)
+            else -> IntRange(0, 0) to IntRange(0, 0)
         }
+
+        val cells: MutableList<MovingCell> = mutableListOf()
+        for (row in rowRange) {
+            val emptyPositionList = mutableListOf<Int>()
+            var previousCell: MovingCell? = null
+
+            for (column in columnRange) {
+                val position = getPosition(row, column)
+                val cellOnPosition = cellsHolder.cells[position]
+
+                if (cellOnPosition == null) {
+                    emptyPositionList.add(position)
+                    continue
+                }
+
+                val endPosition = emptyPositionList
+                    .firstOrNull()
+                    ?.also {
+                        emptyPositionList.remove(it)
+                        emptyPositionList.add(position)
+                    } ?: position
+                val endPoint = cellsHolder.getRectOfPosition(endPosition)
+                val sumWith = previousCell
+                    ?.takeIf { it.cell.value == cellOnPosition.value }
+                    ?.cell
+
+                val movingCell = MovingCell(
+                    cellOnPosition,
+                    position,
+                    endPosition,
+                    endPoint,
+                    sumWith
+                )
+                cells.add(movingCell)
+                previousCell = movingCell
+            }
+        }
+        movingCells.addAll(cells)
         isRunning = true
     }
 
@@ -99,7 +106,24 @@ internal class SwipeController(private val cellsHolder: CellsHolder) : SwipeList
         movingCells.forEach { movingCell ->
             when (swipeDirection) {
                 SwipeDirection.UP -> Unit
-                SwipeDirection.LEFT -> Unit
+                SwipeDirection.LEFT -> {
+                    val dx = minOf(moveDelta, movingCell.cell.left - movingCell.endPoint.left)
+                    if (dx > 0) {
+                        movingCell.cell.translate(x = -dx)
+                        isChanged = true
+                    } else {
+                        cellsHolder.cells.remove(movingCell.position)
+
+                        val sumCell = movingCell.sumWithCell
+                        if (sumCell == null) {
+                            cellsHolder.cells[movingCell.endPosition] = movingCell.cell
+                        } else {
+                            sumCell.value = sumCell.value * 2
+                        }
+
+                        finishedCells.add(movingCell)
+                    }
+                }
                 SwipeDirection.RIGHT -> {
                     val dx = minOf(moveDelta, movingCell.endPoint.right - movingCell.cell.right)
                     if (dx > 0) {
