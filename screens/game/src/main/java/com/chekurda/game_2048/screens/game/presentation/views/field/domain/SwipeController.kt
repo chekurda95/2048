@@ -5,12 +5,13 @@ import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameC
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell.GameCell
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeDirection
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeListener
+import java.util.concurrent.ConcurrentHashMap
 
 internal class SwipeController(private val cellsHolder: CellsProvider) : SwipeListener {
 
     interface CellsProvider {
 
-        val cells: HashMap<Int, GameCell>
+        val cells: ConcurrentHashMap<Int, GameCell>
 
         fun getRectForPosition(position: Int): RectF
     }

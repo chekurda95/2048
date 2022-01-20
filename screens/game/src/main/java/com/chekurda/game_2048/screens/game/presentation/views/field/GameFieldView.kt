@@ -26,6 +26,7 @@ import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeListener
 import io.reactivex.disposables.CompositeDisposable
 import java.lang.RuntimeException
+import java.util.concurrent.ConcurrentHashMap
 
 internal class GameFieldView(
     context: Context,
@@ -41,7 +42,7 @@ internal class GameFieldView(
         for (position in 0 until gameFieldRowSize * gameFieldRowSize) add(position)
     }
 
-    override val cells = HashMap<Int, GameCell>()
+    override val cells = ConcurrentHashMap<Int, GameCell>()
 
     override fun getRectForPosition(position: Int): RectF =
         board.getRectForCell(position)
