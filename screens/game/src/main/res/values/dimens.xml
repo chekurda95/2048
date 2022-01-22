@@ -12,5 +12,11 @@
     <!-- Score -->
     <dimen name="score_header_text_size">16dp</dimen>
     <dimen name="score_value_text_size">22dp</dimen>
+    <dimen name="score_corner_radius">@dimen/cell_corner_radius</dimen>
+
+    <!-- Button -->
+    <dimen name="button_text_size">4dp</dimen>
+    <dimen name="button_height">30dp</dimen>
+    <dimen name="button_corner_radius">@dimen/cell_corner_radius</dimen>
 
 </resources>

@@ -27,7 +27,7 @@ internal class ScoreLayout(context: Context) : AbstractLayout(context) {
         }
     }
 
-    private val borderRadius = resources.getDimensionPixelSize(R.dimen.cell_corner_radius).toFloat()
+    private val borderRadius = resources.getDimensionPixelSize(R.dimen.score_corner_radius).toFloat()
 
     init {
         backgroundPaint.run {

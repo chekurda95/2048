@@ -7,8 +7,11 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.content.ContextCompat
-import androidx.core.view.setPadding
+import androidx.core.content.ContextCompat.getColor
+import androidx.core.view.updatePadding
 import com.chekurda.common.half
+import com.chekurda.design.custom_view_tools.utils.MeasureSpecUtils
+import com.chekurda.design.custom_view_tools.utils.MeasureSpecUtils.makeExactlySpec
 import com.chekurda.design.custom_view_tools.utils.MeasureSpecUtils.makeUnspecifiedSpec
 import com.chekurda.design.custom_view_tools.utils.dp
 import com.chekurda.game_2048.screens.game.R
@@ -30,7 +33,7 @@ internal class GameView(
 
     private val backgroundRect = Rect()
     private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.game_screen_background)
+        color = getColor(context, R.color.game_screen_background)
     }
 
     private val fieldView = GameFieldView(context)
@@ -49,25 +52,34 @@ internal class GameView(
         headerText = "BEST"
         value = 50276
     }
+    private val scorePadding = context.dp(10)
 
-    private val startNewGameButton = Button(context).apply {
-        text = "Start new game"
-        setTextColor(Color.BLACK)
-        setBackgroundColor(Color.YELLOW)
-
-        setPadding(screenPadding)
+    private val menuButton = Button(context).apply {
+        text = "MENU"
+        textSize = resources.getDimensionPixelSize(R.dimen.button_text_size).toFloat()
+        setTextColor(getColor(context, R.color.game_button_text_color))
+        background = ContextCompat.getDrawable(context, R.drawable.game_button)
+        setPadding(0, 0, 0, 0)
     }
-    private val startNewGamePos = dp(20) to dp(20)
+    private val newGameButton = Button(context).apply {
+        text = "NEW GAME"
+        textSize = resources.getDimensionPixelSize(R.dimen.button_text_size).toFloat()
+        setTextColor(getColor(context, R.color.game_button_text_color))
+        background = ContextCompat.getDrawable(context, R.drawable.game_button)
+        setPadding(0, 0, 0, 0)
+    }
+    private val buttonHeight = resources.getDimensionPixelSize(R.dimen.button_height)
 
     private lateinit var gameController: GameController
 
     init {
         setWillNotDraw(false)
         addView(fieldView)
-        addView(startNewGameButton)
+        addView(menuButton)
+        addView(newGameButton)
 
         setOnTouchListener(swipeHelper)
-        startNewGameButton.setOnClickListener {
+        newGameButton.setOnClickListener {
             gameController.startNewGame()
         }
     }
@@ -82,14 +94,15 @@ internal class GameView(
         val fieldSize = measuredWidth - screenPadding * 2
         fieldView.measure(fieldSize, fieldSize)
 
-        startNewGameButton.measure(makeUnspecifiedSpec(), makeUnspecifiedSpec())
-
         val designCellSize = minOf(dp(100), (measuredHeight - fieldView.measuredHeight).half)
         designCell.setResolution(designCellSize, designCellSize)
 
         val scoreSize = designCellSize * 5 / 6
         scoreLayout.setResolution(scoreSize, scoreSize)
         bestScoreLayout.setResolution(scoreSize, scoreSize)
+
+        menuButton.measure(makeExactlySpec(scoreSize), makeExactlySpec(buttonHeight))
+        newGameButton.measure(makeExactlySpec(scoreSize), makeExactlySpec(buttonHeight))
     }
 
 
@@ -110,20 +123,28 @@ internal class GameView(
         designCell.position = Position(fieldLeft.toFloat(), designCellTop)
 
         bestScoreLayout.position = Position(
-            width - screenPadding - bestScoreLayout.width.toFloat(),
+            measuredWidth - screenPadding - bestScoreLayout.width.toFloat(),
             designCellTop
         )
         scoreLayout.position = Position(
-            bestScoreLayout.left - screenPadding - scoreLayout.width,
+            bestScoreLayout.left - scorePadding - scoreLayout.width,
             designCellTop
         )
 
-        /*startNewGameButton.layout(
-            startNewGamePos.first,
-            startNewGamePos.second,
-            startNewGamePos.first + startNewGameButton.measuredWidth,
-            startNewGamePos.second + startNewGameButton.measuredHeight
-        )*/
+        val buttonsTop = scoreLayout.bottom.toInt() + scorePadding
+        menuButton.layout(
+            scoreLayout.left.toInt(),
+            buttonsTop,
+            scoreLayout.left.toInt() + menuButton.measuredWidth,
+            buttonsTop + menuButton.measuredHeight
+        )
+
+        newGameButton.layout(
+            bestScoreLayout.left.toInt(),
+            buttonsTop,
+            bestScoreLayout.left.toInt() + newGameButton.measuredWidth,
+            buttonsTop + newGameButton.measuredHeight
+        )
     }
 
     override fun onDraw(canvas: Canvas) {

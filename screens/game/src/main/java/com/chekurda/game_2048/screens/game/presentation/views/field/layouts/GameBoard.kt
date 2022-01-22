@@ -26,7 +26,7 @@ internal class GameBoard(context: Context) : AbstractLayout(context) {
     private val cellSeparatorWidth = resources.getDimensionPixelOffset(R.dimen.field_cell_separator_width)
     private val cellCornerRadius = resources.getDimensionPixelOffset(R.dimen.cell_corner_radius).toFloat()
     private val cellBackgroundPaint = AntiPaint().apply {
-        color = getColor(context, R.color.empty_cell_background_color)
+        color = getColor(context, R.color.empty_cell_background)
     }
 
     private val cellsPositions = HashMap<Int, RectF>()

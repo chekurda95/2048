@@ -9,12 +9,16 @@
 
     <!-- Game field -->
     <color name="game_field_background">#BBAEA0</color>
-    <color name="empty_cell_background_color">#CCC0B4</color>
+    <color name="empty_cell_background">#CCC0B4</color>
 
     <!-- Score -->
     <color name="score_value_text_color">@color/white</color>
     <color name="score_header_text_color">#F6E8DB</color>
     <color name="score_background_color">#BBADA0</color>
+
+    <!-- Buttons -->
+    <color name="game_button_background_color">#EE985B</color>
+    <color name="game_button_text_color">@color/white</color>
 
     <!-- Cell -->
     <color name="cell_text_color_gray">@color/gray</color>
