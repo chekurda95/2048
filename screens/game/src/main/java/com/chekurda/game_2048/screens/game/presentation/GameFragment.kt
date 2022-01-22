@@ -10,7 +10,6 @@ import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.contract.GameFragmentFactory
 import com.chekurda.game_2048.screens.game.domain.GameController
 import com.chekurda.game_2048.screens.game.presentation.views.GameView
-import com.chekurda.game_2048.screens.game.presentation.views.cell.CellView
 
 @SuppressLint("ClickableViewAccessibility")
 internal class GameFragment : BasePresenterFragment<GameFragmentView, GamePresenter>(),
@@ -62,9 +61,6 @@ internal class GameFragment : BasePresenterFragment<GameFragmentView, GamePresen
         }
         (view as ViewGroup).addView(cell)
     }*/
-
-    private fun getCell(@IdRes id: Int): CellView =
-        requireView().findViewById(id)
 
     override fun drawField(listOfCellsValues: List<Int>) {
         /*viewList.forEachIndexed { index, cellView -> cellView.setValue(listOfCellsValues[index]) }*/
