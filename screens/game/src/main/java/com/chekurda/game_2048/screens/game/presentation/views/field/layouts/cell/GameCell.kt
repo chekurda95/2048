@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.RectF
-import android.graphics.Typeface
 import android.graphics.Typeface.DEFAULT_BOLD
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
@@ -18,12 +17,12 @@ import com.chekurda.design.custom_view_tools.utils.scale
 import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.cellShowingDuration
 import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.cellSumDuration
-import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameFieldObject
+import com.chekurda.game_2048.screens.game.presentation.views.base.AbstractLayout
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.AutoTextSizeHelper.calculateTextSize
 import org.apache.commons.lang3.StringUtils
 import java.lang.RuntimeException
 
-internal class GameCell(context: Context) : GameFieldObject(context) {
+internal class GameCell(context: Context) : AbstractLayout(context) {
 
     private var params = CellParams()
 

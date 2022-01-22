@@ -15,8 +15,7 @@ import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.domain.GameController
 import com.chekurda.game_2048.screens.game.domain.GameController.GameControllerConnector
 import com.chekurda.game_2048.screens.game.presentation.views.field.GameFieldView
-import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameFieldObject
-import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameFieldObject.Position
+import com.chekurda.game_2048.screens.game.presentation.views.base.AbstractLayout.Position
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell.GameCell
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeHelper
 

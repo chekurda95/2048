@@ -10,11 +10,12 @@ import com.chekurda.design.custom_view_tools.utils.copy
 import com.chekurda.design.custom_view_tools.utils.toFloat
 import com.chekurda.design.custom_view_tools.utils.update
 import com.chekurda.game_2048.screens.game.R
+import com.chekurda.game_2048.screens.game.presentation.views.base.AbstractLayout
 import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.gameFieldRowSize
 import java.lang.RuntimeException
 import kotlin.math.roundToInt
 
-internal class GameBoard(context: Context) : GameFieldObject(context) {
+internal class GameBoard(context: Context) : AbstractLayout(context) {
 
     private val backgroundColors = arrayOf(
         getColor(context, R.color.game_screen_background),

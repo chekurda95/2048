@@ -1,4 +1,4 @@
-package com.chekurda.game_2048.screens.game.presentation.views.field.layouts
+package com.chekurda.game_2048.screens.game.presentation.views.base
 
 import android.content.Context
 import android.content.res.Resources
@@ -8,9 +8,9 @@ import androidx.annotation.CallSuper
 import com.chekurda.design.custom_view_tools.utils.AntiPaint
 
 /**
- * Общая реализация объектов игрового поля
+ * Абстрактаная реализация плоской разметки.
  */
-internal abstract class GameFieldObject(
+internal abstract class AbstractLayout(
     protected val context: Context
 ) {
 
