@@ -7,6 +7,7 @@ import android.text.TextPaint
 import androidx.annotation.Px
 import com.chekurda.design.custom_view_tools.utils.dp
 import org.apache.commons.lang3.StringUtils
+import kotlin.math.roundToInt
 
 /**
  * Вспомогательный класс для автоматического определения размера текста.
@@ -31,8 +32,7 @@ internal object AutoTextSizeHelper {
     fun calculateTextSize(
         context: Context,
         value: String,
-        @Px containerSize: Int,
-        textPadding: Int = context.dp(DEFAULT_TEXT_PADDING_DP)
+        @Px containerSize: Int
     ): Float {
         if (value == StringUtils.EMPTY || containerSize == 0) return 0f
         if (this.containerSize != containerSize) cachedSizes.clear()
@@ -41,7 +41,7 @@ internal object AutoTextSizeHelper {
             return cachedSize
         }
 
-        val availableSpace = containerSize - textPadding * 2
+        val availableSpace = getAvailableSpace(containerSize, value)
         if (availableSpace < 0) return 0f
 
         val biggestTestSize = context.dp(availableSpace).toFloat()
@@ -82,7 +82,14 @@ internal object AutoTextSizeHelper {
         textPaint.textSize = textSize
         textPaint.getTextBounds(value, 0, value.length, textBounds)
     }
+
+    private fun getAvailableSpace(containerSize: Int, value: String): Int =
+        when (value.length) {
+            1 -> containerSize * 4 / 9f
+            2 -> containerSize * 5 / 9f
+            3 -> containerSize * 13 / 18f
+            else -> containerSize * 15 / 18f
+        }.roundToInt()
 }
 
-private const val DEFAULT_TEXT_PADDING_DP = 15
 private const val TEXT_SIZE_INFELICITY_DP = 3
