@@ -1,7 +1,7 @@
 package com.chekurda.game_2048.screens.game.presentation.views.field.domain
 
 import android.graphics.RectF
-import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.gameFieldRowSize
+import com.chekurda.game_2048.screens.game.presentation.views.config.GameConfig.gameFieldRowSize
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell.GameCell
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeDirection
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeListener

@@ -11,7 +11,7 @@ import com.chekurda.design.custom_view_tools.utils.toFloat
 import com.chekurda.design.custom_view_tools.utils.update
 import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.presentation.views.base.AbstractLayout
-import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.gameFieldRowSize
+import com.chekurda.game_2048.screens.game.presentation.views.config.GameConfig.gameFieldRowSize
 import java.lang.RuntimeException
 import kotlin.math.roundToInt
 

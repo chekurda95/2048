@@ -15,8 +15,8 @@ import com.chekurda.design.custom_view_tools.utils.AntiTextPaint
 import com.chekurda.design.custom_view_tools.utils.copy
 import com.chekurda.design.custom_view_tools.utils.scale
 import com.chekurda.game_2048.screens.game.R
-import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.cellShowingDuration
-import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.cellSumDuration
+import com.chekurda.game_2048.screens.game.presentation.views.config.GameConfig.cellShowingDuration
+import com.chekurda.game_2048.screens.game.presentation.views.config.GameConfig.cellSumDuration
 import com.chekurda.game_2048.screens.game.presentation.views.base.AbstractLayout
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.AutoTextSizeHelper.calculateTextSize
 import org.apache.commons.lang3.StringUtils

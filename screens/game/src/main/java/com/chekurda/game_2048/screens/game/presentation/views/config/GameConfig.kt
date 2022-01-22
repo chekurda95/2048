@@ -1,4 +1,4 @@
-package com.chekurda.game_2048.screens.game.presentation.views.field.config
+package com.chekurda.game_2048.screens.game.presentation.views.config
 
 internal object GameConfig {
 

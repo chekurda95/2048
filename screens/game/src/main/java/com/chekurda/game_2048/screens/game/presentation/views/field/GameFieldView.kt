@@ -15,8 +15,8 @@ import com.chekurda.game_2048.screens.game.data.models.game.GameState.INIT
 import com.chekurda.game_2048.screens.game.data.models.game.GameState.START_NEW_GAME
 import com.chekurda.game_2048.screens.game.domain.GameController
 import com.chekurda.game_2048.screens.game.domain.GameController.GameControllerConnector
-import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.gameFPS
-import com.chekurda.game_2048.screens.game.presentation.views.field.config.GameConfig.gameFieldRowSize
+import com.chekurda.game_2048.screens.game.presentation.views.config.GameConfig.gameFPS
+import com.chekurda.game_2048.screens.game.presentation.views.config.GameConfig.gameFieldRowSize
 import com.chekurda.game_2048.screens.game.presentation.views.field.domain.SwipeController
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameBoard
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell.GameCell
