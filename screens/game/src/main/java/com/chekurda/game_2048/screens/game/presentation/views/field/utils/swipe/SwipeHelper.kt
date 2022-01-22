@@ -55,4 +55,4 @@ internal class SwipeHelper(
         gestureDetector.onTouchEvent(event)
 }
 
-private const val SWIPE_DISTANCE_DP = 30
+private const val SWIPE_DISTANCE_DP = 20
