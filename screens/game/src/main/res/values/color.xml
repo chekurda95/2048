@@ -27,5 +27,5 @@
     <color name="cell_background_color_256">#F0CF4A</color>
     <color name="cell_background_color_512">#E4C02A</color>
     <color name="cell_background_color_1024">#ECC400</color>
-    <color name="cell_background_color_2048">#FFD400</color>
+    <color name="cell_background_color_2048">#EDC501</color>
 </resources>
