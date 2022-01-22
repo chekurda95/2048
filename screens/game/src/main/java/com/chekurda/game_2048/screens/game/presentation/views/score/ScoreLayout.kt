@@ -49,11 +49,6 @@ internal class ScoreLayout(context: Context) : AbstractLayout(context) {
             if (isChanged) internalLayout()
         }
 
-    override fun onSizeChanged(width: Int, height: Int) {
-        super.onSizeChanged(width, height)
-        internalLayout()
-    }
-
     override fun internalLayout() {
         super.internalLayout()
         if (width == 0 || height == 0) return
