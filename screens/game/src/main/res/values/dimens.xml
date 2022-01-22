@@ -9,4 +9,8 @@
     <dimen name="field_corner_radius">6dp</dimen>
     <dimen name="field_cell_separator_width">8dp</dimen>
 
+    <!-- Score -->
+    <dimen name="score_header_text_size">16dp</dimen>
+    <dimen name="score_value_text_size">22dp</dimen>
+
 </resources>

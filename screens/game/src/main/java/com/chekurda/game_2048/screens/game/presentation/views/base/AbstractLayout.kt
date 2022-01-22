@@ -40,7 +40,7 @@ internal abstract class AbstractLayout(
     var position = Position()
         set(value) {
             field = value
-            updateRect()
+            internalLayout()
         }
 
     fun setRect(rectF: RectF) {
@@ -55,7 +55,7 @@ internal abstract class AbstractLayout(
 
         this.width = width
         this.height = height
-        updateRect()
+        internalLayout()
 
         if (isChanged) onSizeChanged(width, height)
     }
@@ -71,7 +71,7 @@ internal abstract class AbstractLayout(
 
     abstract fun draw(canvas: Canvas)
 
-    private fun updateRect() {
+    protected open fun internalLayout() {
         with(position) {
             rect.set(
                 x,
