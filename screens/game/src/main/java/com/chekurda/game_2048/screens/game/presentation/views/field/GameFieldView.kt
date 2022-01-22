@@ -95,8 +95,8 @@ internal class GameFieldView(
 
         if (board.isReady) {
             cells.clear()
-            addNewCell()
-            addNewCell()
+            addNewRandomCell()
+            addNewRandomCell()
 
             requireGameController().gameIsReady()
         } else {
@@ -105,18 +105,25 @@ internal class GameFieldView(
     }
 
     /**
-     * Добавляет новую ячейку на поле и возвращает true.
+     * Добавляет новую случайную ячейку на поле и возвращает true.
      * Если все ячейки заняты - возвращает false.
      */
-    private fun addNewCell(): Boolean =
+    private fun addNewRandomCell(): Boolean =
         getRandomItem(getEmptyPositions())?.let { emptyPosition ->
-            cells[emptyPosition] = GameCell(context).apply {
-                value = randomValue
-                setRect(board.getRectForCell(emptyPosition))
-                animateShowing()
-            }
+            addNewCell(emptyPosition, randomValue)
             true
         } ?: false
+
+    /**
+     * Добавляет новую ячейку на поле на позицию [position] со значением [value].
+     */
+    private fun addNewCell(position: Int, value: Int) {
+        cells[position] = GameCell(context).apply {
+            this.value = value
+            setRect(board.getRectForCell(position))
+            animateShowing()
+        }
+    }
 
     private fun getEmptyPositions(): List<Int> =
         allPositionList.toMutableList().apply {
@@ -128,7 +135,7 @@ internal class GameFieldView(
     }
 
     private fun onSwipeFinished(isChanged: Boolean) {
-        if (isChanged) addNewCell()
+        if (isChanged) addNewRandomCell()
     }
 
     override fun attachGameController(controller: GameController) {
