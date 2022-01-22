@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.Typeface
+import android.graphics.Typeface.DEFAULT_BOLD
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
@@ -26,7 +28,7 @@ internal class GameCell(context: Context) : GameFieldObject(context) {
     private var params = CellParams()
 
     private val textPaint = AntiTextPaint().apply {
-        isFakeBoldText = true
+        typeface = DEFAULT_BOLD
     }
     private var textPos = 0f to 0f
 

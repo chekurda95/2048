@@ -1,10 +1,10 @@
 package com.chekurda.game_2048.screens.game.presentation.views.field.utils
 
 import android.content.Context
-import android.graphics.Paint
 import android.graphics.Rect
-import android.text.TextPaint
+import android.graphics.Typeface.DEFAULT_BOLD
 import androidx.annotation.Px
+import com.chekurda.design.custom_view_tools.utils.AntiPaint
 import com.chekurda.design.custom_view_tools.utils.dp
 import org.apache.commons.lang3.StringUtils
 import kotlin.math.roundToInt
@@ -25,8 +25,8 @@ internal object AutoTextSizeHelper {
      */
     private val cachedSizes = hashMapOf<Int, Float>()
 
-    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-        .apply { isFakeBoldText = true }
+    private val textPaint = AntiPaint()
+        .apply { typeface = DEFAULT_BOLD }
     private val textBounds = Rect()
 
     fun calculateTextSize(
