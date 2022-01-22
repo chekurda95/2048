@@ -1,10 +1,8 @@
 package com.chekurda.game_2048.screens.game.presentation.views
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.Button
@@ -17,6 +15,9 @@ import com.chekurda.game_2048.screens.game.R
 import com.chekurda.game_2048.screens.game.domain.GameController
 import com.chekurda.game_2048.screens.game.domain.GameController.GameControllerConnector
 import com.chekurda.game_2048.screens.game.presentation.views.field.GameFieldView
+import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameFieldObject
+import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.GameFieldObject.Position
+import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell.GameCell
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeHelper
 
 internal class GameView(
@@ -33,6 +34,11 @@ internal class GameView(
     private val fieldView = GameFieldView(context)
     private val fieldPadding = context.dp(10)
     private val swipeHelper = SwipeHelper(context, fieldView)
+
+    private val designCell = GameCell(context).apply {
+        value = 2048
+        isVisible = true
+    }
 
     private val startNewGameButton = Button(context).apply {
         text = "Start new game"
@@ -65,8 +71,13 @@ internal class GameView(
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val fieldSize = measuredWidth - fieldPadding * 2
         fieldView.measure(fieldSize, fieldSize)
+
         startNewGameButton.measure(makeUnspecifiedSpec(), makeUnspecifiedSpec())
+
+        val designCellSize = minOf(dp(100), (measuredHeight - fieldView.measuredHeight).half)
+        designCell.setResolution(designCellSize, designCellSize)
     }
+
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         getDrawingRect(backgroundRect)
@@ -80,17 +91,22 @@ internal class GameView(
             fieldTop + fieldView.measuredHeight
         )
 
-        startNewGameButton.layout(
+        val designCellTop = (fieldTop - designCell.height) / 3f
+        @SuppressLint("DrawAllocation")
+        designCell.position = Position(fieldLeft.toFloat(), designCellTop)
+
+        /*startNewGameButton.layout(
             startNewGamePos.first,
             startNewGamePos.second,
             startNewGamePos.first + startNewGameButton.measuredWidth,
             startNewGamePos.second + startNewGameButton.measuredHeight
-        )
+        )*/
     }
 
     override fun onDraw(canvas: Canvas) {
         if (background == null) {
             canvas.drawRect(backgroundRect, backgroundPaint)
         }
+        designCell.draw(canvas)
     }
 }
