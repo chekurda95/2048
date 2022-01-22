@@ -8,6 +8,9 @@ internal object GameConfig {
     var gameFieldRowSize = DEFAULT_GAME_FIELD_ROW_SIZE
         private set
 
+    var cellMovementDuration = DEFAULT_CELL_MOVEMENT_DURATION_MS
+        private set
+
     var cellShowingDuration = DEFAULT_CELL_SHOWING_DURATION_MS
         private set
 
@@ -17,5 +20,6 @@ internal object GameConfig {
 
 private const val DEFAULT_GAME_FPS = 60
 private const val DEFAULT_GAME_FIELD_ROW_SIZE = 4
-private const val DEFAULT_CELL_SHOWING_DURATION_MS = 240
+private const val DEFAULT_CELL_MOVEMENT_DURATION_MS = 140
+private const val DEFAULT_CELL_SHOWING_DURATION_MS = 200
 private const val DEFAULT_CELL_SUM_DURATION_MS = 200

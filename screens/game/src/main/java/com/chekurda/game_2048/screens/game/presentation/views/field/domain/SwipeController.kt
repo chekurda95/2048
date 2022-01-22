@@ -1,15 +1,18 @@
 package com.chekurda.game_2048.screens.game.presentation.views.field.domain
 
 import android.graphics.RectF
+import android.view.animation.LinearInterpolator
+import com.chekurda.game_2048.screens.game.presentation.views.config.GameConfig.cellMovementDuration
 import com.chekurda.game_2048.screens.game.presentation.views.config.GameConfig.gameFieldRowSize
 import com.chekurda.game_2048.screens.game.presentation.views.field.layouts.cell.GameCell
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeDirection
 import com.chekurda.game_2048.screens.game.presentation.views.field.utils.swipe.SwipeListener
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.roundToInt
 
-internal class SwipeController(private val cellsHolder: CellsProvider) : SwipeListener {
+internal class SwipeController(private val cellsHolder: FieldInfo) : SwipeListener {
 
-    interface CellsProvider {
+    interface FieldInfo {
 
         val cells: ConcurrentHashMap<Int, GameCell>
 
@@ -18,6 +21,11 @@ internal class SwipeController(private val cellsHolder: CellsProvider) : SwipeLi
 
     var swipeFinishedListener: ((Boolean) -> Unit)? = null
 
+    private val cellMovementSpeed: Float by lazy {
+        val firstRowRect = cellsHolder.getRectForPosition(0)
+        val lastRowRect = cellsHolder.getRectForPosition(gameFieldRowSize - 1)
+        (lastRowRect.right - firstRowRect.right) / cellMovementDuration
+    }
     private var isRunning: Boolean = false
     private var isChanged: Boolean = false
     private var swipeDirection: SwipeDirection? = null
@@ -102,7 +110,7 @@ internal class SwipeController(private val cellsHolder: CellsProvider) : SwipeLi
     }
 
     private fun onSwipeRunning(swipeDirection: SwipeDirection, deltaTimeMs: Int) {
-        val moveDelta = deltaTimeMs / 150f * 800
+        val moveDelta = deltaTimeMs * cellMovementSpeed
         val finishedCells = mutableListOf<MovingCell>()
         var isFieldChanged = false
         movingCells.forEach { movingCell ->

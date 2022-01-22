@@ -35,7 +35,7 @@ internal class GameFieldView(
     DrawingLayout,
     GameControllerConnector,
     SwipeListener,
-    SwipeController.CellsProvider {
+    SwipeController.FieldInfo {
 
     private val board = GameBoard(context)
     private val allPositionList: List<Int> = mutableListOf<Int>().apply {
