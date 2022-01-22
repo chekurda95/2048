@@ -7,6 +7,6 @@
 
     <!-- Field -->
     <dimen name="field_corner_radius">6dp</dimen>
-    <dimen name="field_cell_separator_width">10dp</dimen>
+    <dimen name="field_cell_separator_width">8dp</dimen>
 
 </resources>
