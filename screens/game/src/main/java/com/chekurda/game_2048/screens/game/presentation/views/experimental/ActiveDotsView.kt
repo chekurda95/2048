@@ -31,16 +31,8 @@ class ActiveDotsView(context: Context) : View(context) {
             val isChanged = field != value
             field = value
 
-            updateMinSize()
             updateStepsState()
             if (isChanged) safeRequestLayout()
-        }
-
-    private var stepUpdateTime = 0L
-    private var lastStep = params.dotsCount
-    private var step = 0
-        set(value) {
-            field = value % (lastStep + 1)
         }
 
     private val paint = Paint().apply {
@@ -53,35 +45,36 @@ class ActiveDotsView(context: Context) : View(context) {
         color = params.color
     }
 
-    init {
-        updateMinSize()
-    }
-
-    private fun updateMinSize() {
-        with(params) {
-            minimumHeight = dotSize
-            minimumWidth = dotsCount * dotSize + dotSpacing * (dotsCount - 1)
+    private var stepUpdateTime = 0L
+    private val lastStep: Int
+        get() = params.dotsCount
+    private var step = 0
+        set(value) {
+            field = value % (lastStep + 1)
         }
-    }
+
+    private var firstDotCenter = 0f to 0f
 
     private fun updateStepsState() {
         step = 0
-        lastStep = params.dotsCount
         stepUpdateTime = System.currentTimeMillis()
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        if (isInEditMode) {
-            setMeasuredDimension(minimumWidth, minimumHeight)
-        } else {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        }
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+        if (visibility == VISIBLE) updateStepsState()
     }
 
-    override fun onVisibilityChanged(changedView: View, visibility: Int) {
-        if (visibility == VISIBLE) {
-            updateStepsState()
-        }
+    override fun getSuggestedMinimumWidth(): Int =
+        paddingStart + with(params) { dotSize * dotsCount + dotSpacing * (dotsCount - 1) } + paddingEnd
+
+    override fun getSuggestedMinimumHeight(): Int =
+        paddingTop + params.dotSize + paddingBottom
+
+    override fun getBaseline(): Int =
+        firstDotCenter.second.toInt()
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        firstDotCenter = paddingStart.toFloat() + params.dotRadius to measuredHeight - paddingBottom - params.dotRadius
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -101,8 +94,8 @@ class ActiveDotsView(context: Context) : View(context) {
                 // Для остальных очередь не дошла - не рисуем
                 else -> return@repeat
             }
-            val dotCenter = (dotIndex + 0.5f) * params.dotSize + dotIndex * params.dotSpacing
-            canvas.drawCircle(dotCenter, params.dotRadius, params.dotRadius, dotPaint)
+            val dotHorizontalCenter = firstDotCenter.first + params.dotSize * dotIndex + params.dotSpacing * dotIndex
+            canvas.drawCircle(dotHorizontalCenter, firstDotCenter.second, params.dotRadius, dotPaint)
         }
 
         if (currentTime - stepUpdateTime >= params.oneStepDurationMs) {
