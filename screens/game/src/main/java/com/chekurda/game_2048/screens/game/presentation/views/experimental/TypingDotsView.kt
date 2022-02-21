@@ -11,7 +11,7 @@ import androidx.annotation.Px
 import androidx.core.view.isVisible
 import com.chekurda.design.custom_view_tools.utils.safeRequestLayout
 
-class ActiveDotsView(context: Context) : View(context) {
+class TypingDotsView(context: Context) : View(context) {
 
     constructor(context: Context, attrs: AttributeSet? = null) : this(context)
 
@@ -31,8 +31,10 @@ class ActiveDotsView(context: Context) : View(context) {
             val isChanged = field != value
             field = value
 
-            updateStepsState()
-            if (isChanged) safeRequestLayout()
+            if (isChanged) {
+                updateStepsState()
+                safeRequestLayout()
+            }
         }
 
     private val paint = Paint().apply {

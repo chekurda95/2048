@@ -3,6 +3,7 @@ package com.chekurda.game_2048.screens.game.presentation.views.experimental
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
@@ -10,89 +11,152 @@ import com.chekurda.design.custom_view_tools.TextLayout
 import com.chekurda.design.custom_view_tools.utils.MeasureSpecUtils.makeUnspecifiedSpec
 import com.chekurda.design.custom_view_tools.utils.safeRequestLayout
 import com.chekurda.design.custom_view_tools.utils.sp
+import com.chekurda.design.custom_view_tools.utils.textHeight
 import com.chekurda.game_2048.screens.game.R
-import org.apache.commons.lang3.StringUtils
+import com.chekurda.game_2048.screens.game.presentation.views.experimental.TypingDotsView.Params
+import org.apache.commons.lang3.StringUtils.EMPTY
+import org.apache.commons.lang3.StringUtils.SPACE
 
 class UsersTypingView(context: Context) : ViewGroup(context) {
 
-    class UsersPrintingData(
-        val fewUsers: List<MockUserName> = emptyList(),
-        val count: Int = 0
+    class UsersTypingData(
+        val typingUsers: List<MockUserName> = emptyList(),
+        val showUsers: Boolean = true
     )
 
-    var data: UsersPrintingData = UsersPrintingData()
+    var data: UsersTypingData = UsersTypingData()
         set(value) {
             val isChanged = data != value
             field = value
-            if (isChanged) {
-                textLayout.buildLayout { text = makeUsersPrintingText() }
-                safeRequestLayout()
-            }
+            if (isChanged) onDataSetChanged()
         }
 
     @Px var textSize: Float = sp(DEFAULT_TEXT_SIZE_SP).toFloat()
         set(value) {
-            val isChanged = textLayout.configure { textSize = value }
+            val usersChanged = usersLayout.configure { textSize = value }
+            val typingChanged = typingLayout.configure { textSize = value }
+            typingDotsView.params = Params(dotSize = (value * ACTIVE_POINTS_SIZE_PERCENT).toInt())
+
             field = value
-            if (isChanged) safeRequestLayout()
+            if (usersChanged || typingChanged) safeRequestLayout()
         }
 
     @ColorInt var textColor: Int = Color.GRAY
         set(value) {
             field = value
-            textLayout.textPaint.color = value
+            usersLayout.textPaint.color = value
         }
 
-    private val onePrintingText = resources.getString(R.string.one_typing)
+    private val oneTypingText = resources.getString(R.string.one_typing)
     private val fewPrintingText = resources.getString(R.string.few_typing)
 
-    private val textLayout = TextLayout {
+    private val usersLayout = TextLayout {
         paint.textSize = textSize
         paint.color = textColor
     }
 
-    private val activeDotsView = ActiveDotsView(context).apply {
-        params = ActiveDotsView.Params(dotSize = (textSize * ACTIVE_POINTS_SIZE_PERCENT).toInt())
+    private val typingLayout = TextLayout {
+        paint.textSize = textSize
+        paint.color = textColor
+    }
+
+    private val typingDotsView = TypingDotsView(context).apply {
+        params = Params(dotSize = (textSize * ACTIVE_POINTS_SIZE_PERCENT).toInt())
     }
 
     init {
         setWillNotDraw(false)
-        addView(activeDotsView)
+        addView(typingDotsView)
     }
 
-    private fun makeUsersPrintingText(): String =
-        if (data.count < 3) {
-            val userNameList = if (data.fewUsers.size < 3) {
-                data.fewUsers.map { it.renderName }.filter { it.isNotBlank() }
-            } else emptyList()
+    private fun onDataSetChanged() {
+        if (data.showUsers) {
+            val userNameList = data.typingUsers
+                .filter { it.lastOrFirst.isNotBlank() }
+                .take(MAX_TYPING_USERS)
 
-            when (userNameList.size) {
-                1 -> "${userNameList.first()} $onePrintingText"
-                2 -> userNameList.joinToString(postfix = StringUtils.SPACE + fewPrintingText)
-                else -> StringUtils.EMPTY
+            if (userNameList.isNotEmpty()) {
+                typingLayout.configure {
+                    text = SPACE + if (userNameList.size > 1) fewPrintingText else oneTypingText
+                }
+                usersLayout.configure {
+                    text = makeUsersTypingText(userNameList)
+                    isVisible = true
+                }
+
+                safeRequestLayout()
+                visibility = View.VISIBLE
+            } else {
+                visibility = View.GONE
             }
         } else {
-            resources.getQuantityString(R.plurals.participants_typing, data.count, data.count)
+            visibility = View.VISIBLE
+            usersLayout.configure { isVisible = false }
+            val isChanged = typingLayout.configure { text = oneTypingText }
+
+            if (isChanged) safeRequestLayout()
+        }
+    }
+
+    private fun makeUsersTypingText(users: List<MockUserName>): String =
+        when (users.size) {
+            0 -> EMPTY
+            1 -> users.first().renderName
+            else -> users.joinToString { it.lastOrFirst }
         }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        measureChild(activeDotsView, makeUnspecifiedSpec(), makeUnspecifiedSpec())
+        measureChild(typingDotsView, makeUnspecifiedSpec(), makeUnspecifiedSpec())
+        setMeasuredDimension(
+            measureDirection(widthMeasureSpec) { suggestedMinimumWidth },
+            measureDirection(heightMeasureSpec) { suggestedMinimumHeight }
+        )
+    }
+
+    @Px
+    private fun measureDirection(measureSpec: Int, getMinSize: () -> Int): Int =
+        when (MeasureSpec.getMode(measureSpec)) {
+            MeasureSpec.EXACTLY -> MeasureSpec.getSize(measureSpec)
+            MeasureSpec.AT_MOST -> minOf(getMinSize(), MeasureSpec.getSize(measureSpec))
+            else -> getMinSize()
+        }
+
+    override fun getSuggestedMinimumWidth(): Int {
+        val minContentWidth = listOf(
+            paddingStart,
+            if (usersLayout.isVisible) usersLayout.getDesiredWidth(usersLayout.text) else 0,
+            typingLayout.getDesiredWidth(typingLayout.text),
+            typingDotsView.measuredWidth,
+            paddingEnd
+        ).sumBy { it }
+        return maxOf(super.getSuggestedMinimumWidth(), minContentWidth)
+    }
+
+    override fun getSuggestedMinimumHeight(): Int =
+        maxOf(super.getSuggestedMinimumHeight(), paddingTop + typingLayout.textPaint.textHeight + paddingBottom)
+
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        usersLayout.configure {
+            maxWidth = paddingStart + typingLayout.width + typingDotsView.measuredWidth + paddingEnd
+        }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        textLayout.layout(0, 0)
-        val dotsTop = textLayout.top + textLayout.baseline - activeDotsView.baseline
-        activeDotsView.layout(
-            textLayout.right,
-            textLayout.top + textLayout.baseline - activeDotsView.baseline,
-            textLayout.right + activeDotsView.measuredWidth,
-            dotsTop + activeDotsView.measuredHeight
+        usersLayout.layout(paddingStart, paddingTop)
+        typingLayout.layout(usersLayout.right, usersLayout.top)
+        val dotsTop = typingLayout.top + typingLayout.baseline - typingDotsView.baseline
+        typingDotsView.layout(
+            typingLayout.right,
+            dotsTop,
+            typingLayout.right + typingDotsView.measuredWidth,
+            dotsTop + typingDotsView.measuredHeight
         )
     }
 
     override fun onDraw(canvas: Canvas) {
-        textLayout.draw(canvas)
+        usersLayout.draw(canvas)
+        typingLayout.draw(canvas)
     }
 
     override fun hasOverlappingRendering(): Boolean = false
@@ -100,18 +164,19 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
 
 private const val ACTIVE_POINTS_SIZE_PERCENT = 0.15
 private const val DEFAULT_TEXT_SIZE_SP = 14
+private const val MAX_TYPING_USERS = 10
 
 data class MockUserName(val lastName: String, val firstName: String) {
-    val renderName: String
-        get() {
-            val isEmptyLast = lastName.isBlank()
-            val isEmptyFirst = firstName.isBlank()
-            return when {
-                !isEmptyFirst && !isEmptyLast -> "$lastName ${firstName.first()}."
-                isEmptyFirst && isEmptyLast -> StringUtils.EMPTY
-                isEmptyFirst -> lastName
-                isEmptyLast -> firstName
-                else -> StringUtils.EMPTY
-            }
+    val renderName: String by lazy {
+        val isEmptyLast = lastName.isBlank()
+        val isEmptyFirst = firstName.isBlank()
+        when {
+            isEmptyFirst -> lastName
+            isEmptyLast -> firstName
+            else -> "$lastName ${firstName.first()}."
         }
+    }
+
+    val lastOrFirst: String
+        get() = lastName.takeIf { it.isNotBlank() } ?: firstName
 }
