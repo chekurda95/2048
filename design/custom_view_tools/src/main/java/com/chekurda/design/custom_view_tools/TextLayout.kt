@@ -441,21 +441,16 @@ class TextLayout(config: TextLayoutConfig? = null) {
         @get:Px
         internal val textWidth: Int
             get() {
-                val maxWidth = maxWidth
                 val layoutWidth = layoutWidth
                 val horizontalPadding = padding.start + padding.end
-                return when {
-                    maxWidth == null -> {
-                        layoutWidth?.let { maxOf(it - horizontalPadding, 0) }
-                            ?: paint.getTextWidth(text)
-                    }
-                    maxWidth > 0 -> {
-                        val textWidth = paint.getTextWidth(text)
-                        val availableTextWidth = maxOf(maxWidth - horizontalPadding, 0)
-                        textWidth.takeIf { textWidth < availableTextWidth }
-                            ?: availableTextWidth
-                    }
-                    else -> 0
+                return if (layoutWidth != null) {
+                    maxOf(layoutWidth - horizontalPadding, 0)
+                } else {
+                    val textWidth = paint.getTextWidth(text)
+                    val minTextWidth = if (minWidth > 0) maxOf(minWidth - horizontalPadding, 0) else 0
+                    val maxTextWidth = maxWidth?.let { maxOf(it - horizontalPadding, 0) } ?: Integer.MAX_VALUE
+
+                    maxOf(minTextWidth, minOf(textWidth, maxTextWidth))
                 }
             }
 
