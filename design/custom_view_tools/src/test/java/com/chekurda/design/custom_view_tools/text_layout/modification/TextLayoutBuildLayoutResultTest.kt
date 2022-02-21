@@ -13,6 +13,8 @@ import org.junit.Test
 
 /**
  * Тесты результата метода [TextLayout.buildLayout].
+ *
+ * @author vv.chekurda
  */
 class TextLayoutBuildLayoutResultTest {
 

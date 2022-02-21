@@ -1,6 +1,6 @@
 package com.chekurda.design.custom_view_tools.text_layout
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import android.os.Build
 import com.chekurda.design.custom_view_tools.TextLayout
 import com.chekurda.design.custom_view_tools.TextLayout.TextLayoutParams
 import org.junit.Assert.assertEquals
@@ -10,11 +10,16 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Тесты [TextLayout.isVisible].
+ *
+ * @author vv.chekurda
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class TextLayoutIsVisibleTest {
 
     private lateinit var textLayout: TextLayout

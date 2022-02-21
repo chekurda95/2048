@@ -2,12 +2,12 @@ package com.chekurda.design.custom_view_tools.utils
 
 import android.graphics.Color
 import android.graphics.Paint.FontMetrics
+import android.os.Build
 import android.text.Layout
 import android.text.Layout.Alignment.ALIGN_NORMAL
 import android.text.SpannableString
 import android.text.TextPaint
 import android.text.TextUtils.TruncateAt
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import org.apache.commons.lang3.StringUtils.EMPTY
@@ -18,11 +18,16 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import com.chekurda.design.custom_view_tools.utils.StaticLayoutConfigurator.Companion.createStaticLayout
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Тесты [StaticLayoutConfigurator].
+ *
+ * @author vv.chekurda
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class StaticLayoutConfiguratorCompanionTest {
 
     private val textPaint = TextPaint()

@@ -1,17 +1,22 @@
 package com.chekurda.design.custom_view_tools.text_layout.modification
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import android.os.Build
 import com.chekurda.design.custom_view_tools.TextLayout
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Тесты метода [TextLayout.buildLayout].
+ *
+ * @author vv.chekurda
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class TextLayoutBuildLayoutTest {
 
     private lateinit var textLayout: TextLayout

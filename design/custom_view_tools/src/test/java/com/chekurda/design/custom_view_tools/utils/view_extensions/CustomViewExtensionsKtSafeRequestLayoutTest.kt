@@ -13,6 +13,8 @@ import com.chekurda.design.custom_view_tools.utils.safeRequestLayout
 
 /**
  * Тесты метода [safeRequestLayout].
+ *
+ * @author vv.chekurda
  */
 @RunWith(MockitoJUnitRunner.StrictStubs::class)
 class CustomViewExtensionsKtSafeRequestLayoutTest {

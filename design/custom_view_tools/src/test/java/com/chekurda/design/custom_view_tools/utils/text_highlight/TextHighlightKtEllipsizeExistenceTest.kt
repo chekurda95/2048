@@ -14,6 +14,8 @@ import com.chekurda.design.custom_view_tools.utils.lastTextIndex
 
 /**
  * Тесты методов [hasSimpleEllipsize], [hasSymbolEllipsize], [lastTextIndex].
+ *
+ * @author vv.chekurda
  */
 @RunWith(JUnitParamsRunner::class)
 class TextHighlightKtEllipsizeExistenceTest {

@@ -16,6 +16,8 @@ import com.chekurda.design.custom_view_tools.utils.setHighlightSpan
 
 /**
  * Тесты метода [setHighlightSpan].
+ *
+ * @author vv.chekurda
  */
 @RunWith(MockitoJUnitRunner.StrictStubs::class)
 class TextHighlightKtHighlightSpanTest {

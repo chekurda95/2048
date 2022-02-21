@@ -37,6 +37,8 @@ import com.chekurda.design.custom_view_tools.utils.StaticLayoutConfigurator.Comp
  * @property highlights модель для выделения текста, например для сценариев поиска.
  * @property canContainUrl true, если строка может содержать url. Влияет на точность сокращения текста
  * и скорость создания [StaticLayout]. (Использовать только для [maxLines] > 1, когда текст может содержать ссылки)
+ *
+ * @author vv.chekurda
  */
 class StaticLayoutConfigurator internal constructor(
     private var text: CharSequence,
@@ -84,9 +86,7 @@ class StaticLayoutConfigurator internal constructor(
                 val lineWidth = layout.getLineWidth(lastLineIndex)
                 val off = layout.getOffsetForHorizontal(lastLineIndex, if (left != 0f) left else lineWidth)
                 val endIndex = maxOf(if (lineWidth < width) off else off - THREE_SYMBOLS_OFFSET_FROM_TELEGRAM, 0)
-                text = SpannableStringBuilder(text.subSequence(0, endIndex)).append(
-                    HORIZONTAL_ELLIPSIS_CHAR
-                )
+                text = SpannableStringBuilder(text.subSequence(0, endIndex)).append(HORIZONTAL_ELLIPSIS_CHAR)
                 buildStaticLayout(canContainUrl)
             }
         }
@@ -109,7 +109,7 @@ class StaticLayoutConfigurator internal constructor(
     private fun configureMaxLines() {
         val calculatedMaxLines = when {
             text.isBlank() -> SINGLE_LINE
-            maxHeight != null -> maxOf(maxHeight!!, 0) / paint.textHeight
+            maxHeight != null -> maxOf(maxHeight!!, 0) / getOneLineHeight()
             else -> maxLines
         }
         maxLines = maxOf(calculatedMaxLines, SINGLE_LINE)
@@ -163,6 +163,33 @@ class StaticLayoutConfigurator internal constructor(
                 width
             )
         }
+
+    /**
+     * Получить высоту одной строки текста по заданному [paint].
+     */
+    private fun getOneLineHeight(): Int =
+        paint.textHeight.let { textHeight ->
+            if (textHeight != 0 || paint.textSize == 0f) {
+                textHeight
+            } else {
+                getOneLineHeightByStaticLayout()
+            }
+        }
+
+    /**
+     * Получить высоту одной строки текста путем создания [StaticLayout].
+     *
+     * Необходимость для тестов, где нет возможности замокать native [TextPaint],
+     * который возвращает textSize == 0,
+     * [StaticLayout] как-то обходит эту ситуацию через другие нативные методы.
+     */
+    private fun getOneLineHeightByStaticLayout(): Int {
+        val paramsMaxLines = maxLines
+        maxLines = 1
+        return buildStaticLayout().height.also {
+            maxLines = paramsMaxLines
+        }
+    }
 }
 
 private typealias StaticLayoutConfig = StaticLayoutConfigurator.() -> Unit

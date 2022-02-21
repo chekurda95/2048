@@ -1,8 +1,8 @@
 package com.chekurda.design.custom_view_tools.utils.text_highlight
 
 import android.graphics.Color
+import android.os.Build
 import android.text.TextPaint
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import org.apache.commons.lang3.StringUtils.EMPTY
@@ -16,11 +16,16 @@ import com.chekurda.design.custom_view_tools.utils.HighlightSpan
 import com.chekurda.design.custom_view_tools.utils.TextHighlights
 import com.chekurda.design.custom_view_tools.utils.ellipsizeAndHighlightText
 import com.chekurda.design.custom_view_tools.utils.highlightText
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Тесты метода [ellipsizeAndHighlightText].
+ *
+ * @author vv.chekurda
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class TextHighlightKtEllipsizeAndHighlightTextTest {
 
     private val textPaint = TextPaint()

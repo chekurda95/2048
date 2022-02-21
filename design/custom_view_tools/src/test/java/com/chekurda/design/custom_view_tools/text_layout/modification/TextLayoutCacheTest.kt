@@ -1,7 +1,7 @@
 package com.chekurda.design.custom_view_tools.text_layout.modification
 
+import android.os.Build
 import android.text.StaticLayout
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.chekurda.design.custom_view_tools.TextLayout
 import com.chekurda.design.custom_view_tools.TextLayout.Companion.createTextLayoutByStyle
 import com.chekurda.design.custom_view_tools.styles.StyleParams
@@ -20,11 +20,16 @@ import org.junit.runner.RunWith
 import com.chekurda.design.custom_view_tools.text_layout.assertCacheIsEmpty
 import com.chekurda.design.custom_view_tools.text_layout.assertCacheIsNotEmpty
 import com.nhaarman.mockitokotlin2.doReturn
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Тесты [TextLayout] на предмет ленивого создания [StaticLayout] в поле [TextLayout.cachedLayout].
+ *
+ * @author vv.chekurda
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class TextLayoutCacheTest {
 
     private lateinit var textLayout: TextLayout
@@ -203,6 +208,11 @@ class TextLayoutCacheTest {
         assertCacheIsEmpty(TextLayout { isVisible = false }) { height }
     }
 
+    @Test
+    fun `TextLayout don't create StaticLayout after request height, when layoutWidth is equals 0`() {
+        assertCacheIsEmpty(TextLayout { layoutWidth = 0 }) { height }
+    }
+
     // endregion
 
     // region Create StaticLayout
@@ -218,8 +228,13 @@ class TextLayoutCacheTest {
     }
 
     @Test
-    fun `TextLayout create StaticLayout after request height, when width is equals 0`() {
-        assertCacheIsNotEmpty(TextLayout { layoutWidth = 0 }) { height }
+    fun `TextLayout create StaticLayout after request lineCount`() {
+        assertCacheIsNotEmpty(textLayout) { lineCount }
+    }
+
+    @Test
+    fun `TextLayout create StaticLayout after request baseline`() {
+        assertCacheIsNotEmpty(textLayout) { baseline }
     }
 
     @Test

@@ -1,8 +1,8 @@
 package com.chekurda.design.custom_view_tools.text_layout.modification
 
 import android.graphics.Color
+import android.os.Build
 import android.text.TextUtils.TruncateAt
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.chekurda.design.custom_view_tools.TextLayout
 import com.chekurda.design.custom_view_tools.TextLayout.TextLayoutPadding
 import org.junit.Assert.assertFalse
@@ -12,11 +12,16 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import com.chekurda.design.custom_view_tools.utils.TextHighlights
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Тесты метода [TextLayout.configure] для модификации параметров [TextLayout.params].
+ *
+ * @author vv.chekurda
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class TextLayoutConfigureTest {
 
     private lateinit var textLayout: TextLayout

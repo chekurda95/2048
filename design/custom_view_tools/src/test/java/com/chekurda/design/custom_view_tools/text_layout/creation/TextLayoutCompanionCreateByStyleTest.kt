@@ -2,11 +2,11 @@ package com.chekurda.design.custom_view_tools.text_layout.creation
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Build
 import android.text.Layout.Alignment
 import android.text.TextPaint
 import android.text.TextUtils.TruncateAt
 import androidx.annotation.StyleRes
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.chekurda.design.custom_view_tools.TextLayout
 import com.chekurda.design.custom_view_tools.TextLayout.Companion.createTextLayoutByStyle
 import com.chekurda.design.custom_view_tools.TextLayout.TextLayoutParams
@@ -25,11 +25,16 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import com.chekurda.design.custom_view_tools.text_layout.assertNotEqualsExcludingPaint
 import com.chekurda.design.custom_view_tools.text_layout.assertParamsEquals
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Тесты создания [TextLayout] с помощью стиля через [TextLayout.createTextLayoutByStyle].
+ *
+ * @author vv.chekurda
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class TextLayoutCompanionCreateByStyleTest {
 
     private val mockContext = mock<Context>()

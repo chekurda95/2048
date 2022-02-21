@@ -1,8 +1,8 @@
 package com.chekurda.design.custom_view_tools.utils.text_highlight
 
 import android.graphics.Color
+import android.os.Build
 import android.text.Spannable
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -23,11 +23,16 @@ import com.chekurda.design.custom_view_tools.utils.HighlightSpan
 import com.chekurda.design.custom_view_tools.utils.TextHighlights
 import com.chekurda.design.custom_view_tools.utils.highlightText
 import com.chekurda.design.custom_view_tools.utils.lastTextIndex
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Тесты метода [highlightText].
+ *
+ * @author vv.chekurda
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class TextHighlightKtHighlightTextTest {
 
     private val highlightColor = Color.YELLOW

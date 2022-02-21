@@ -1,18 +1,23 @@
 package com.chekurda.design.custom_view_tools.utils
 
+import android.os.Build
 import android.view.View.MeasureSpec
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import com.chekurda.design.custom_view_tools.utils.MeasureSpecUtils.makeAtMostSpec
 import com.chekurda.design.custom_view_tools.utils.MeasureSpecUtils.makeExactlySpec
 import com.chekurda.design.custom_view_tools.utils.MeasureSpecUtils.makeUnspecifiedSpec
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Тесты методов [makeExactlySpec], [makeAtMostSpec], [makeUnspecifiedSpec].
+ *
+ * @author vv.chekurda
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class MeasureSpecUtilsTest {
 
     @Test

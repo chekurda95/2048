@@ -1,10 +1,10 @@
 package com.chekurda.design.custom_view_tools.text_layout.creation
 
 import android.graphics.Color
+import android.os.Build
 import android.text.Layout
 import android.text.TextPaint
 import android.text.TextUtils.TruncateAt
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.chekurda.design.custom_view_tools.TextLayout
 import com.chekurda.design.custom_view_tools.TextLayout.TextLayoutParams
 import com.chekurda.design.custom_view_tools.TextLayoutConfig
@@ -15,11 +15,16 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Тесты создания [TextLayout] через [TextLayoutConfig].
+ *
+ * @author vv.chekurda
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class TextLayoutCreateByConfigTest {
 
     private lateinit var defaultParams: TextLayoutParams

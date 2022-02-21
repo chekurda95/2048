@@ -1,6 +1,8 @@
 package com.chekurda.design.custom_view_tools
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -13,9 +15,12 @@ import android.text.Layout.Alignment
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils.TruncateAt
-import android.view.View
+import android.view.*
+import androidx.annotation.AttrRes
+import androidx.annotation.IdRes
 import androidx.annotation.Px
 import androidx.annotation.StyleRes
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.withTranslation
 import org.apache.commons.lang3.StringUtils
 import com.chekurda.design.custom_view_tools.TextLayout.Companion.createTextLayoutByStyle
@@ -27,9 +32,14 @@ import com.chekurda.design.custom_view_tools.styles.StyleParamsProvider
 import com.chekurda.design.custom_view_tools.utils.StaticLayoutConfigurator
 import com.chekurda.design.custom_view_tools.utils.TextHighlights
 import com.chekurda.design.custom_view_tools.utils.getTextWidth
+import timber.log.Timber
+import kotlin.math.roundToInt
 
 /**
  * Разметка для отображения текста.
+ *
+ * @param config настройка параметров текстовой разметки.
+ * @see TextLayoutParams
  *
  * Является оберткой над [Layout] для отображения текста,
  * который лениво создается по набору параметров модели [params].
@@ -39,12 +49,35 @@ import com.chekurda.design.custom_view_tools.utils.getTextWidth
  * или с помощью методов [configure] и [buildLayout].
  * Статичный метод [createTextLayoutByStyle] позволяет создавать разметку по xml стилю.
  *
- * Имеет возможность включения отладочных границ разметки при помощи [isInspectMode].
+ * Дополнительный функционал:
+ * - Установка слушателя кликов [TextLayout.OnClickListener].
+ * - Установка долгих кликов кликов [TextLayout.OnLongClickListener].
+ * - Менеджер для упрошения обработки касаний по текстовым разметкам [TextLayoutTouchManager].
+ * - Поддержка состояний [isEnabled], [isPressed], [isSelected], см. [colorStateList].
+ * - Вспомогательный класс для предоставления инфоримации о разметках [TextLayout] для автотестирования кастомных [View].
+ * - Отладка границ разметки при помощи локального включения [isInspectMode], см. [InspectHelper].
  *
- * @param config настройка параметров текстовой разметки.
- * @see TextLayoutParams
+ * @author vv.chekurda
  */
-class TextLayout(config: TextLayoutConfig? = null) {
+class TextLayout(config: TextLayoutConfig? = null) : View.OnTouchListener {
+
+    /**
+     * Слушатель кликов по текстовой разметке.
+     * @see TextLayout.setOnClickListener
+     */
+    fun interface OnClickListener {
+
+        fun onClick(context: Context, layout: TextLayout)
+    }
+
+    /**
+     * Слушатель долгих кликов по текстовой разметке.
+     * @see TextLayout.setOnLongClickListener
+     */
+    fun interface OnLongClickListener {
+
+        fun onLongClick(context: Context, layout: TextLayout)
+    }
 
     companion object {
 
@@ -120,6 +153,29 @@ class TextLayout(config: TextLayoutConfig? = null) {
     private val params = TextLayoutParams()
 
     /**
+     * Вспомогательный класс для обработки событий касаний по текстовой разметке.
+     */
+    private val touchHelper: TouchHelper by lazy { TouchHelper() }
+
+    /**
+     * Горизонтальный паддинг для обработки касаний (левый и правый).
+     */
+    private val horizontalTouchPadding: Pair<Int, Int>
+        get() = touchHelper.horizontalTouchPadding
+
+    /**
+     * Вертикальный паддинг для обработки касаний (верхний и нижний).
+     */
+    private val verticalTouchPadding: Pair<Int, Int>
+        get() = touchHelper.verticalTouchPadding
+
+    /**
+     * Вспомогательный класс для управления рисуемыми состояниями текстовой разметки.
+     * @see colorStateList
+     */
+    private val drawableStateHelper: DrawableStateHelper by lazy { DrawableStateHelper() }
+
+    /**
      * Вспомогательный класс для отладки текстовой разметки.
      * Для включения отладочного мода необходимо переключить [isInspectMode] в true.
      * Может оказаться крайне полезным на этапе интеграции [TextLayout].
@@ -173,6 +229,12 @@ class TextLayout(config: TextLayoutConfig? = null) {
     private var rect = Rect()
 
     /**
+     * Идентификатор разметки.
+     */
+    @IdRes
+    var id: Int = ResourcesCompat.ID_NULL
+
+    /**
      * Текст разметки.
      */
     val text: CharSequence
@@ -198,6 +260,16 @@ class TextLayout(config: TextLayoutConfig? = null) {
      */
     val maxLines: Int
         get() = params.maxLines
+
+    /**
+     * Количество строк текста в [TextLayout].
+     *
+     * Обращение к полю вызывает построение [StaticLayout], если ранее он еще не был создан,
+     * или если [params] разметки были изменены путем вызова [configure],
+     * в иных случаях лишнего построения не произойдет.
+     */
+    val lineCount: Int
+        get() = layout.lineCount
 
     /**
      * Левая позиция разметки, установленная в [layout].
@@ -257,31 +329,110 @@ class TextLayout(config: TextLayoutConfig? = null) {
 
     /**
      * Ширина всей разметки.
+     *
+     * Обращение к полю вызывает построение [StaticLayout], если ранее он еще не был создан,
+     * или если [params] разметки были изменены путем вызова [configure],
+     * в иных случаях лишнего построения не произойдет.
      */
     @get:Px
     val width: Int
         get() = if (isVisible) {
-            maxOf(paddingStart + layout.width + paddingEnd, params.minWidth)
+            params.layoutWidth
+                ?: maxOf(
+                    params.minWidth,
+                    minOf(paddingStart + layout.width + paddingEnd, params.maxWidth ?: Integer.MAX_VALUE)
+                )
         } else 0
 
     /**
      * Высота всей разметки.
+     *
+     * Обращение к полю вызывает построение [StaticLayout], если ранее он еще не был создан,
+     * или если [params] разметки были изменены путем вызова [configure],
+     * в иных случаях лишнего построения не произойдет.
      */
     @get:Px
     val height: Int
-        get() = if (isVisible && width != 0) {
-            maxOf(paddingTop + layout.height + paddingBottom, params.minHeight)
+        get() = if (isVisible) {
+            if (width != 0) {
+                maxOf(
+                    params.minHeight,
+                    minOf(paddingTop + layout.height + paddingBottom, params.maxHeight ?: Integer.MAX_VALUE)
+                )
+            } else {
+                params.minHeight
+            }
         } else 0
 
     /**
      * Базовая линия текстовой разметки.
+     *
+     * Обращение к полю вызывает построение [StaticLayout], если ранее он еще не был создан,
+     * или если [params] разметки были изменены путем вызова [configure],
+     * в иных случаях лишнего построения не произойдет.
      */
     @get:Px
     val baseline: Int
         get() = paddingTop + layout.getLineBaseline(0)
 
     /**
-     * Получить ожидаемую ширину разметки для текста [text].
+     * Установить/получить список цветов текста для состояний.
+     * @see isEnabled
+     * @see isPressed
+     * @see isSelected
+     *
+     * Для работы [ColorStateList] необходимо сделать разметку кликабельной [makeClickable],
+     * а также доставлять события касаний с помощью [TextLayoutTouchManager] или самостоятельно в метод [onTouch].
+     */
+    var colorStateList: ColorStateList? = null
+        set(value) {
+            val isChanged = value != field
+            field = value
+            if (isChanged) drawableStateHelper.onColorStateListChanged()
+        }
+
+    /**
+     * Установить/получить состояние доступности тестовой разметки.
+     *
+     * Если текстовая разметка недоступна - клики обрабатываться не будут.
+     * @see colorStateList
+     * @see makeClickable
+     * @see setOnClickListener
+     * @see setOnLongClickListener
+     */
+    var isEnabled: Boolean = true
+        set(value) {
+            val isChanged = field != value
+            field = value
+            if (isChanged) drawableStateHelper.setEnabled(value)
+        }
+
+    /**
+     * Установить/получить нажатое состояние тестовой разметки.
+     *
+     * @see colorStateList
+     */
+    var isPressed: Boolean = false
+        set(value) {
+            val isChanged = field != value
+            field = value
+            if (isChanged) drawableStateHelper.setPressed(value)
+        }
+
+    /**
+     * Установить/получить состояние выбранности текстовой разметки.
+     *
+     * @see colorStateList
+     */
+    var isSelected: Boolean = false
+        set(value) {
+            val isChanged = field != value
+            field = value
+            if (isChanged) drawableStateHelper.setSelected(value)
+        }
+
+    /**
+     * Получить ожидаемую ширину разметки для текста [text] без создания [StaticLayout].
      */
     @Px
     fun getDesiredWidth(text: CharSequence): Int =
@@ -305,6 +456,7 @@ class TextLayout(config: TextLayoutConfig? = null) {
         val oldParams = params.copy()
 
         config.invoke(params)
+        checkWarnings()
 
         val isTextSizeChanged = oldTextSize != params.paint.textSize
         return (oldParams != params || isTextSizeChanged).also { isChanged ->
@@ -346,7 +498,12 @@ class TextLayout(config: TextLayoutConfig? = null) {
     }
 
     /**
-     * Разместить разметку на позициях [left] [top].
+     * Разместить разметку на координате ([left],[top]).
+     * Координата является позицией левого верхнего угла [TextLayout]
+     *
+     * Метод вызывает построение [StaticLayout], если ранее он еще не был создан,
+     * или если [params] разметки были изменены путем вызова [configure],
+     * в иных случаях лишнего построения не произойдет.
      */
     fun layout(@Px left: Int, @Px top: Int) {
         rect.set(
@@ -356,6 +513,8 @@ class TextLayout(config: TextLayoutConfig? = null) {
             top + height
         )
         textPos = left + paddingStart.toFloat() to top + paddingTop.toFloat()
+
+        touchHelper.updateTouchRect()
         inspectHelper?.updatePositions()
     }
 
@@ -373,6 +532,92 @@ class TextLayout(config: TextLayoutConfig? = null) {
                 layout.draw(this)
             }
         }
+    }
+
+    /**
+     * Сделать текстовую разметку кликабельной.
+     * @param parentView view, в которой находится текстовая разметка.
+     *
+     * Необходимо вызывать для включения обработки [onTouch].
+     * @see TextLayoutTouchManager - менеджер, который автоматически включает кликабельность.
+     */
+    fun makeClickable(parentView: View) {
+        touchHelper.init(parentView)
+        drawableStateHelper.init(parentView)
+    }
+
+    /**
+     * Установить слушателя кликов [listener] по текстовой разметке.
+     * @see TextLayoutTouchManager
+     *
+     * Для включения обработки кликов разметка должна быть кликабельная [makeClickable].
+     * В состоянии [isEnabled] == false - клики обрабатываться не будут.
+     */
+    fun setOnClickListener(listener: OnClickListener?) {
+        touchHelper.setOnClickListener(listener)
+    }
+
+    /**
+     * Установить слушателя долгих кликов [listener] по текстовой разметке.
+     * @see TextLayoutTouchManager
+     *
+     * Для включения обработки долгих кликов разметка должна быть кликабельная [makeClickable].
+     * В состоянии [isEnabled] == false - клики обрабатываться не будут.
+     */
+    fun setOnLongClickListener(listener: OnLongClickListener?) {
+        touchHelper.setOnLongClickListener(listener)
+    }
+
+    /**
+     * Установить отступы для увеличения области касания по текстовой разметке.
+     *
+     * Отступы будут применены к основным границам [TextLayout] после вызова [layout].
+     * Фактически происходит расширение кликабельной области на заданные значения
+     * и не влияет на размер и позиции разметки.
+     */
+    fun setTouchPadding(
+        left: Int = horizontalTouchPadding.first,
+        top: Int = verticalTouchPadding.first,
+        right: Int = horizontalTouchPadding.second,
+        bottom: Int = horizontalTouchPadding.second
+    ) {
+        touchHelper.setTouchPadding(left, top, right, bottom)
+    }
+
+    /**
+     * Установить отступы [padding] по всему периметру для увеличения области касания по текстовой разметке.
+     * @see setTouchPadding
+     */
+    fun setTouchPadding(padding: Int) {
+        touchHelper.setTouchPadding(padding)
+    }
+
+    /**
+     * Установить статичную область кликабельности текстовой разметки.
+     *
+     * При установке [rect] отступы из [setTouchPadding] перестанут работать.
+     * Для сброса статичной области кликабельности необходимо передать [rect] == null.
+     */
+    fun setStaticTouchRect(rect: Rect?) {
+        touchHelper.setStaticTouchRect(rect)
+    }
+
+    /**
+     * Обработать событие касания.
+     *
+     * Для включения обработки событий касания необходимо сделать текстовую разметку кликабельной [makeClickable].
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouch(v: View, event: MotionEvent): Boolean =
+        touchHelper.onTouch(event)
+            ?.also { isHandled -> drawableStateHelper.checkPressedState(event.action, isHandled) }
+            ?: false
+
+    /**
+     * Отменить событие касания.
+     */
+    fun onTouchCanceled() {
+        drawableStateHelper.checkPressedState(MotionEvent.ACTION_CANCEL, true)
     }
 
     /**
@@ -394,6 +639,20 @@ class TextLayout(config: TextLayoutConfig? = null) {
             isLayoutChanged = false
             cachedLayout = it
         }
+
+    private fun checkWarnings() {
+        val layoutWidth = params.layoutWidth
+        if (!BuildConfig.DEBUG || layoutWidth == null) return
+
+        val minWidth = params.minWidth
+        val maxWidth = params.maxWidth
+        if (minWidth > 0 && layoutWidth < minWidth) {
+            Timber.e(IllegalArgumentException("Потенциальная ошибка отображения TextLayout: значение параметра layoutWidth(${params.layoutWidth}) меньше minWidth(${params.minWidth}). Приоритетное значение размера - layoutWidth(${params.layoutWidth}). TextLayoutParams = $params"))
+        }
+        if (maxWidth != null && layoutWidth > maxWidth) {
+            Timber.e(IllegalArgumentException("Потенциальная ошибка отображения TextLayout: значение параметра layoutWidth(${params.layoutWidth}) больше maxWidth(${params.maxWidth}). Приоритетное значение размера - layoutWidth(${params.layoutWidth}). TextLayoutParams = $params"))
+        }
+    }
 
     /**
      * Параметры для создания текстовой разметки [Layout] в [TextLayout].
@@ -459,7 +718,7 @@ class TextLayout(config: TextLayoutConfig? = null) {
          */
         @get:Px
         internal val textMaxHeight: Int?
-            get() = maxHeight?.let { it - padding.top - padding.bottom }
+            get() = maxHeight?.let { maxOf(it - padding.top - padding.bottom, 0) }
     }
 
     /**
@@ -471,6 +730,285 @@ class TextLayout(config: TextLayoutConfig? = null) {
         @Px val end: Int = 0,
         @Px val bottom: Int = 0
     )
+
+    /**
+     * Вспомогательный класс для обработки касаний по [TextLayout].
+     */
+    private inner class TouchHelper {
+
+        private var parentView: View? = null
+
+        private val touchRect: Rect = Rect()
+        private var isStaticTouchRect = false
+        var horizontalTouchPadding = 0 to 0
+            private set
+        var verticalTouchPadding = 0 to 0
+            private set
+
+        private var gestureDetector: GestureDetector? = null
+            get() {
+                if (field == null) {
+                    field = parentView?.context?.let { GestureDetector(it, gestureListener) }
+                }
+                return field
+            }
+        private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
+
+            private fun isInTouchRect(event: MotionEvent) =
+                touchRect.contains(event.x.roundToInt(), event.y.roundToInt())
+
+            override fun onDown(event: MotionEvent): Boolean =
+                isInTouchRect(event)
+
+            override fun onSingleTapUp(event: MotionEvent): Boolean =
+                (isInTouchRect(event)).also { isConfirmed ->
+                    if (!isEnabled || !isConfirmed) return@also
+
+                    val context = parentView?.context ?: return@also
+                    onClickListener?.onClick(context, this@TextLayout)
+                }
+
+            override fun onLongPress(event: MotionEvent) {
+                if (isInTouchRect(event) && isEnabled) {
+                    val context = parentView?.context ?: return
+                    onLongClickListener?.onLongClick(context, this@TextLayout)?.also {
+                        parentView?.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                    }
+                }
+            }
+        }
+        private var onClickListener: OnClickListener? = null
+        private var onLongClickListener: OnLongClickListener? = null
+
+        /**
+         * Проинициализировать помощника.
+         *
+         * @param parentView view, в которой находится текстовая разметка.
+         */
+        fun init(parentView: View) {
+            this.parentView = parentView
+        }
+
+        /**
+         * Установить слушателя кликов [listener] по текстовой разметке.
+         * @see TextLayoutTouchManager
+         *
+         * Для включения обработки кликов разметка должна быть кликабельная [makeClickable].
+         * В состоянии [isEnabled] == false - клики обрабатываться не будут.
+         */
+        fun setOnClickListener(listener: OnClickListener?) {
+            onClickListener = listener
+        }
+
+        /**
+         * Установить слушателя долгих кликов [listener] по текстовой разметке.
+         * @see TextLayoutTouchManager
+         *
+         * Для включения обработки долгих кликов разметка должна быть кликабельная [makeClickable].
+         * В состоянии [isEnabled] == false - клики обрабатываться не будут.
+         */
+        fun setOnLongClickListener(listener: OnLongClickListener?) {
+            onLongClickListener = listener
+        }
+
+        /**
+         * Установить отступы для увеличения области касания по текстовой разметке.
+         *
+         * Отступы будут применены к основным границам [TextLayout] после вызова [layout].
+         * Фактически происходит расширение кликабельной области на заданные значения
+         * и не влияет на размер и позиции разметки.
+         */
+        fun setTouchPadding(
+            left: Int = horizontalTouchPadding.first,
+            top: Int = verticalTouchPadding.first,
+            right: Int = horizontalTouchPadding.second,
+            bottom: Int = horizontalTouchPadding.second
+        ) {
+            horizontalTouchPadding = left to right
+            verticalTouchPadding = top to bottom
+        }
+
+        /**
+         * Установить отступы [padding] по всему периметру для увеличения области касания по текстовой разметке.
+         * @see setTouchPadding
+         */
+        fun setTouchPadding(padding: Int) {
+            setTouchPadding(left = padding, top = padding, right = padding, bottom = padding)
+        }
+
+        /**
+         * Установить статичную область кликабельности текстовой разметки.
+         *
+         * При установке [rect] отступы из [setTouchPadding] перестанут работать.
+         * Для сброса статичной области кликабельности необходимо передать [rect] == null.
+         */
+        fun setStaticTouchRect(rect: Rect?) {
+            touchRect.set(rect ?: this@TextLayout.rect)
+            isStaticTouchRect = touchRect != this@TextLayout.rect
+        }
+
+        /**
+         * Обновить область касания согласно [TextLayout.rect].
+         *
+         * Игнорируется, если установлена статичная область касания [setStaticTouchRect].
+         */
+        fun updateTouchRect() {
+            if (isStaticTouchRect) return
+            with(rect) {
+                touchRect.set(
+                    left - horizontalTouchPadding.first,
+                    top - verticalTouchPadding.first,
+                    right + horizontalTouchPadding.second,
+                    bottom + verticalTouchPadding.second
+                )
+            }
+        }
+
+        /**
+         * Обработать событие касания [event].
+         * @return true, если событие касания было обработано текущей текстовой разметкой.
+         */
+        fun onTouch(event: MotionEvent): Boolean? =
+            gestureDetector?.onTouchEvent(event)
+    }
+
+    /**
+     * Вспомогательный класс для управления рисуемыми состояниями текстовой разметки.
+     * @see colorStateList
+     */
+    private inner class DrawableStateHelper {
+
+        /**
+         * Список текущих рисуемых состояний текстовой разметки.
+         */
+        private val drawableState = mutableSetOf(android.R.attr.state_enabled)
+        private var parentView: View? = null
+
+        /**
+         * Проинициализировать помощника.
+         *
+         * @param parentView view, в которой находится текстовая разметка.
+         */
+        fun init(parentView: View) {
+            this.parentView = parentView
+        }
+
+        /**
+         * Колбэк об обновлении списка цветов для состояний - [colorStateList].
+         */
+        fun onColorStateListChanged() {
+            updateTextColorByState()
+        }
+
+        /**
+         * Проверить состояние нажатости по действию события касания [motionAction] и признаку обработки этого события [isHandled].
+         */
+        fun checkPressedState(motionAction: Int, isHandled: Boolean) {
+            when (motionAction and MotionEvent.ACTION_MASK) {
+                MotionEvent.ACTION_DOWN,
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    if (isHandled) {
+                        removeCancelPressedCallback()
+                        if (isEnabled) setPressed(true)
+                    }
+                }
+                MotionEvent.ACTION_UP           -> dispatchCancelPressedCallback()
+                MotionEvent.ACTION_CANCEL       -> setPressed(false)
+            }
+        }
+
+        /**
+         * Установить доступное состояние тестовой разметки.
+         */
+        fun setEnabled(enabled: Boolean) {
+            val enabledAttr = android.R.attr.state_enabled
+            val disableAttr = -enabledAttr
+
+            val isStateChanged = if (enabled) {
+                val isAdded = drawableState.add(enabledAttr)
+                val isRemoved = drawableState.remove(disableAttr)
+                isAdded || isRemoved
+            } else {
+                val isAdded = drawableState.add(disableAttr)
+                val isRemoved = drawableState.remove(enabledAttr)
+                isPressed = false
+                isAdded || isRemoved
+            }
+
+            if (isStateChanged) {
+                updateTextColorByState()
+                invalidate()
+            }
+        }
+
+        /**
+         * Установить нажатое состояние тестовой разметки.
+         */
+        fun setPressed(pressed: Boolean) {
+            updateDrawableState(android.R.attr.state_pressed, pressed)
+        }
+
+        /**
+         * Установить выбранное состояние текстовой разметки.
+         */
+        fun setSelected(selected: Boolean) {
+            updateDrawableState(android.R.attr.state_selected, selected)
+        }
+
+        /**
+         * Обновить рисуемое состояние текстовой разметки.
+         *
+         * @param stateAttr атрибут нового состояния
+         * @param isActive true, если состояние активно
+         */
+        private fun updateDrawableState(@AttrRes stateAttr: Int, isActive: Boolean) {
+            val isStateChanged =
+                if (isActive) drawableState.add(stateAttr)
+                else drawableState.remove(stateAttr)
+
+            if (isStateChanged) {
+                updateTextColorByState()
+                invalidate()
+            }
+        }
+
+        /**
+         * Обновить цвет текста согласно текущему рисуемому состоянию.
+         */
+        private fun updateTextColorByState() {
+            textPaint.drawableState = drawableState.toIntArray()
+            colorStateList?.let { stateList ->
+                textPaint.color = stateList.getColorForState(textPaint.drawableState, stateList.defaultColor)
+            }
+        }
+
+        private fun invalidate() {
+            parentView?.takeIf { colorStateList != null && it.isAttachedToWindow }
+                ?.invalidate()
+        }
+
+        /**
+         * Действие отмены нажатого рисуемого состояния.
+         */
+        private val cancelPressedCallback = Runnable { setPressed(false) }
+
+        /**
+         * Отправить отложенное действие [cancelPressedCallback] для отмены нажатого рисуемого состояния.
+         */
+        private fun dispatchCancelPressedCallback() {
+            parentView?.handler?.postDelayed(
+                cancelPressedCallback,
+                ViewConfiguration.getPressedStateDuration().toLong()
+            )
+        }
+
+        /**
+         * Очистить колбэк для отмены нажатого рисуемого состояния [cancelPressedCallback].
+         */
+        private fun removeCancelPressedCallback() {
+            parentView?.handler?.removeCallbacks(cancelPressedCallback)
+        }
+    }
 
     /**
      * Вспомогательный класс для отладки текстовой разметки.

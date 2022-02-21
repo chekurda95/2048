@@ -17,6 +17,8 @@ import com.chekurda.design.custom_view_tools.utils.textHeight
 
 /**
  * Тесты методов [getTextWidth] и [textHeight].
+ *
+ * @author vv.chekurda
  */
 @RunWith(JUnitParamsRunner::class)
 class CustomViewExtensionsKtTextPaintExtensionsTest {

@@ -1,5 +1,6 @@
 package com.chekurda.design.custom_view_tools.text_layout
 
+import android.os.Build
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.chekurda.design.custom_view_tools.TextLayout
 import com.chekurda.design.custom_view_tools.utils.getTextWidth
@@ -10,6 +11,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Тесты для расчета позиций [TextLayout] и позиций для текста.
@@ -19,8 +22,11 @@ import org.junit.runner.RunWith
  * @see TextLayout.bottom
  * @see TextLayout.textPos
  * @see TextLayout.baseline
+ *
+ * @author vv.chekurda
  */
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class TextLayoutBuildLayoutTest {
 
     private lateinit var textLayout: TextLayout
