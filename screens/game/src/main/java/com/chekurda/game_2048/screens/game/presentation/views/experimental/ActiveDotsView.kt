@@ -71,7 +71,7 @@ class ActiveDotsView(context: Context) : View(context) {
         paddingTop + params.dotSize + paddingBottom
 
     override fun getBaseline(): Int =
-        firstDotCenter.second.toInt()
+        (firstDotCenter.second + params.dotRadius).toInt()
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         firstDotCenter = paddingStart.toFloat() + params.dotRadius to measuredHeight - paddingBottom - params.dotRadius
