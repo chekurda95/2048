@@ -208,9 +208,17 @@ class TextLayout(config: TextLayoutConfig? = null) : View.OnTouchListener {
 
     /**
      * Текущая текстовая разметка.
-     * Лениво инициализируется при первом обращении к [layout].
+     * Лениво инициализируется при первом обращении к [layout], если разметка изменилась [isLayoutChanged].
      */
     private var cachedLayout: Layout? = null
+
+    /**
+     * Текущая ширина разметки без учета оступов.
+     * Лениво инициализируется при первом обращении к [layout], если разметка изменилась [isLayoutChanged].
+     */
+    @Px
+    private var cachedLayoutWidth: Int = 0
+        get() = layout.let { field }
 
     /**
      * Признак необходимости в построении layout при следующем обращении
@@ -340,7 +348,7 @@ class TextLayout(config: TextLayoutConfig? = null) : View.OnTouchListener {
             params.layoutWidth
                 ?: maxOf(
                     params.minWidth,
-                    minOf(paddingStart + layout.width + paddingEnd, params.maxWidth ?: Integer.MAX_VALUE)
+                    minOf(paddingStart + cachedLayoutWidth + paddingEnd, params.maxWidth ?: Integer.MAX_VALUE)
                 )
         } else 0
 
@@ -638,7 +646,19 @@ class TextLayout(config: TextLayoutConfig? = null) : View.OnTouchListener {
         }.also {
             isLayoutChanged = false
             cachedLayout = it
+            updateCachedLayoutWidth()
         }
+
+    /**
+     * Обновить кэш ширины разметки без учета отступов.
+     */
+    private fun updateCachedLayoutWidth() {
+        cachedLayoutWidth = if (layout.lineCount == 1 && params.needHighWidthAccuracy) {
+            layout.getLineWidth(0).roundToInt()
+        } else {
+            layout.width
+        }
+    }
 
     private fun checkWarnings() {
         val layoutWidth = params.layoutWidth
@@ -674,6 +694,11 @@ class TextLayout(config: TextLayoutConfig? = null) : View.OnTouchListener {
      * @property isVisibleWhenBlank мод скрытия разметки при пустом тексте, включая [padding].
      * @property canContainUrl true, если строка может содержать url. Влияет на точность сокращения текста
      * и скорость создания [StaticLayout]. (Использовать только для [maxLines] > 1, когда текст может содержать ссылки)
+     * @property needHighWidthAccuracy true, если необходимо включить мод высокой точности ширины текста.
+     * Механика релевантна для однострочных разметок с сокращением текста, к размерам которых привязаны другие элементы.
+     * После сокращения текста [StaticLayout] не всегда имеет точные размеры строго по границам текста ->
+     * иногда остается лишнее пространство, которое может оказаться критичным для отображения.
+     * [needHighWidthAccuracy] решает эту проблему, но накладывает дополнительные расходы на вычисления при перестроении разметки.
      */
     data class TextLayoutParams(
         var text: CharSequence = StringUtils.EMPTY,
@@ -691,7 +716,8 @@ class TextLayout(config: TextLayoutConfig? = null) : View.OnTouchListener {
         @Px var maxWidth: Int? = null,
         @Px var maxHeight: Int? = null,
         var isVisibleWhenBlank: Boolean = true,
-        var canContainUrl: Boolean = false
+        var canContainUrl: Boolean = false,
+        var needHighWidthAccuracy: Boolean = false
     ) {
 
         /**
@@ -1056,7 +1082,7 @@ class TextLayout(config: TextLayoutConfig? = null) : View.OnTouchListener {
             textBackgroundPath.addRect(
                 textPos.first,
                 textPos.second,
-                textPos.first + layout.width,
+                textPos.first + cachedLayoutWidth,
                 textPos.second + layout.height,
                 Path.Direction.CW
             )
