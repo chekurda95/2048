@@ -81,6 +81,7 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
                 }
                 usersLayout.configure {
                     text = makeUsersTypingText(userNameList)
+                    needHighWidthAccuracy = userNameList.size > 1
                     isVisible = true
                 }
 
@@ -138,7 +139,7 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         usersLayout.configure {
-            maxWidth = paddingStart + typingLayout.width + typingDotsView.measuredWidth + paddingEnd
+            maxWidth = w - paddingStart - typingLayout.width - typingDotsView.measuredWidth - paddingEnd
         }
     }
 
