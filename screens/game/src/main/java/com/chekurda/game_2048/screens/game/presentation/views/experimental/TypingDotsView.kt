@@ -11,66 +11,108 @@ import androidx.annotation.Px
 import androidx.core.view.isVisible
 import com.chekurda.design.custom_view_tools.utils.safeRequestLayout
 
+/**
+ * View для отображения анимируемых точек.
+ * @see DotsParams
+ *
+ * @author vv.chekurda
+ */
 class TypingDotsView(context: Context) : View(context) {
 
     constructor(context: Context, attrs: AttributeSet? = null) : this(context)
 
-    data class Params(
+    /**
+     * Параметры анимируемых точек.
+     *
+     * @property durationMs общее время продолжительности анимации всех точек.
+     * @property count количество точек.
+     * @property size размер точек в px.
+     * @property spacing отстыпы между точками в px.
+     * @property color цвет точек.
+     */
+    data class DotsParams(
         val durationMs: Int = DEFAULT_ANIMATION_DURATION_MS,
-        val dotsCount: Int = DEFAULT_DOTS_COUNT,
-        @Px val dotSize: Int = DEFAULT_DOTS_SIZE_PX,
-        @Px val dotSpacing: Int = dotSize,
+        val count: Int = DEFAULT_DOTS_COUNT,
+        @Px val size: Int = DEFAULT_DOTS_SIZE_PX,
+        @Px val spacing: Int = size,
         @ColorInt val color: Int = Color.GRAY
     ) {
-        val oneStepDurationMs: Int by lazy { durationMs / (dotsCount + 1) }
-        val dotRadius: Float by lazy { dotSize / 2f }
+        val oneStepDurationMs: Int by lazy { durationMs / (count + 1) }
+        val dotRadius: Float by lazy { size / 2f }
     }
 
-    var params = Params()
+    /**
+     * Установить/получить параметры с настройками анимируемых точек.
+     * @see DotsParams
+     */
+    var params = DotsParams()
         set(value) {
             val isChanged = field != value
             field = value
 
             if (isChanged) {
-                updateStepsState()
+                clearSteps()
                 safeRequestLayout()
             }
         }
 
+    /**
+     * Основная краска, которой рисуются отображаемые точки.
+     */
     private val paint = Paint().apply {
         isAntiAlias = true
         color = params.color
     }
 
+    /**
+     * Вспомогательная краска для отрисовки появления или исчезновения точек.
+     */
     private val fadePaint = Paint().apply {
         isAntiAlias = true
         color = params.color
     }
 
-    private var stepUpdateTime = 0L
+    /**
+     * Время обновления шага анимации в мс.
+     */
+    private var stepUpdateTimeMs = 0L
+
+    /**
+     * Номер самого последнего шага анимации.
+     */
     private val lastStep: Int
-        get() = params.dotsCount
+        get() = params.count
+
+    /**
+     * Текущий шаг анимации.
+     */
     private var step = 0
         set(value) {
             field = value % (lastStep + 1)
         }
 
+    /**
+     * Центр первой точки, относительно которого происходит выравнивание всех точек.
+     */
     private var firstDotCenter = 0f to 0f
 
-    private fun updateStepsState() {
+    /**
+     * Сбросить все шаги анимации к исходному состоянию.
+     */
+    private fun clearSteps() {
         step = 0
-        stepUpdateTime = System.currentTimeMillis()
+        stepUpdateTimeMs = System.currentTimeMillis()
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
-        if (visibility == VISIBLE) updateStepsState()
+        if (visibility == VISIBLE) clearSteps()
     }
 
     override fun getSuggestedMinimumWidth(): Int =
-        paddingStart + with(params) { dotSize * dotsCount + dotSpacing * (dotsCount - 1) } + paddingEnd
+        paddingStart + with(params) { size * count + spacing * (count - 1) } + paddingEnd
 
     override fun getSuggestedMinimumHeight(): Int =
-        paddingTop + params.dotSize + paddingBottom
+        paddingTop + params.size + paddingBottom
 
     override fun getBaseline(): Int =
         (firstDotCenter.second + params.dotRadius).toInt()
@@ -83,11 +125,11 @@ class TypingDotsView(context: Context) : View(context) {
         if (!isVisible) return
 
         val currentTime = System.currentTimeMillis()
-        val interpolation = minOf((currentTime - stepUpdateTime) / params.oneStepDurationMs.toFloat(), 1f)
+        val interpolation = minOf((currentTime - stepUpdateTimeMs) / params.oneStepDurationMs.toFloat(), 1f)
         val interpolationForStep = if (step != lastStep) interpolation else 1f - interpolation
         fadePaint.alpha = (interpolationForStep * MAX_ALPHA).toInt()
 
-        repeat(params.dotsCount) { dotIndex ->
+        repeat(params.count) { dotIndex ->
             val dotPaint = when {
                 // Появление точки или исчезновение всех точек
                 dotIndex == step || step == lastStep -> fadePaint
@@ -96,13 +138,13 @@ class TypingDotsView(context: Context) : View(context) {
                 // Для остальных очередь не дошла - не рисуем
                 else -> return@repeat
             }
-            val dotHorizontalCenter = firstDotCenter.first + params.dotSize * dotIndex + params.dotSpacing * dotIndex
+            val dotHorizontalCenter = firstDotCenter.first + params.size * dotIndex + params.spacing * dotIndex
             canvas.drawCircle(dotHorizontalCenter, firstDotCenter.second, params.dotRadius, dotPaint)
         }
 
-        if (currentTime - stepUpdateTime >= params.oneStepDurationMs) {
+        if (currentTime - stepUpdateTimeMs >= params.oneStepDurationMs) {
             step++
-            stepUpdateTime = currentTime
+            stepUpdateTimeMs = currentTime
         }
         invalidate()
     }
@@ -110,7 +152,22 @@ class TypingDotsView(context: Context) : View(context) {
     override fun hasOverlappingRendering(): Boolean = false
 }
 
+/**
+ * Максимальная alpha у краски.
+ */
 private const val MAX_ALPHA = 255
+
+/**
+ * Стандартное количество анимируемых точек.
+ */
 private const val DEFAULT_DOTS_COUNT = 3
+
+/**
+ * Стандартная продолжительность анимации всех точек.
+ */
 private const val DEFAULT_ANIMATION_DURATION_MS = 1000
+
+/**
+ * Стандартный размер точек в px.
+ */
 private const val DEFAULT_DOTS_SIZE_PX = 50
