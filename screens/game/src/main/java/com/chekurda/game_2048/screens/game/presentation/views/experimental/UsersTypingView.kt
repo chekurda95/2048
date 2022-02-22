@@ -13,7 +13,7 @@ import com.chekurda.design.custom_view_tools.utils.safeRequestLayout
 import com.chekurda.design.custom_view_tools.utils.sp
 import com.chekurda.design.custom_view_tools.utils.textHeight
 import com.chekurda.game_2048.screens.game.R
-import com.chekurda.game_2048.screens.game.presentation.views.experimental.TypingDotsView.Params
+import com.chekurda.game_2048.screens.game.presentation.views.experimental.TypingDotsView.DotsParams
 import org.apache.commons.lang3.StringUtils.EMPTY
 import org.apache.commons.lang3.StringUtils.SPACE
 
@@ -36,7 +36,7 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
         set(value) {
             val usersChanged = usersLayout.configure { textSize = value }
             val typingChanged = typingLayout.configure { textSize = value }
-            typingDotsView.params = Params(dotSize = (value * ACTIVE_POINTS_SIZE_PERCENT).toInt())
+            typingDotsView.params = DotsParams(size = (value * ACTIVE_POINTS_SIZE_PERCENT).toInt())
 
             field = value
             if (usersChanged || typingChanged) safeRequestLayout()
@@ -62,7 +62,7 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
     }
 
     private val typingDotsView = TypingDotsView(context).apply {
-        params = Params(dotSize = (textSize * ACTIVE_POINTS_SIZE_PERCENT).toInt())
+        params = DotsParams(size = (textSize * ACTIVE_POINTS_SIZE_PERCENT).toInt())
     }
 
     init {
