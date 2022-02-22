@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <plurals name="participants_count">
+        <item quantity="one">%1$d участник</item>
+        <item quantity="few">%1$d участника</item>
+        <item quantity="many">%1$d участников</item>
+        <item quantity="other">%1$d участников</item>
+    </plurals>
+
+    <plurals name="typing">
+        <item quantity="one" tools:ignore="ImpliedQuantity">печатает</item>
+        <item quantity="few">печатают</item>
+        <item quantity="many">печатают</item>
+        <item quantity="other">печатают</item>
+    </plurals>
+</resources>

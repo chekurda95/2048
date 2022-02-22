@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="participants_count">
+        <item quantity="one">%1$d participant</item>
+        <item quantity="few">%1$d participants</item>
+        <item quantity="other">%1$d participants</item>
+    </plurals>
+
+    <plurals name="typing">
+        <item quantity="one">is typing</item>
+        <item quantity="few">are typing</item>
+        <item quantity="other">are typing</item>
+    </plurals>
+</resources>

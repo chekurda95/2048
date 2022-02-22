@@ -21,7 +21,8 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
 
     class UsersTypingData(
         val typingUsers: List<MockUserName> = emptyList(),
-        val showUsers: Boolean = true
+        val typingCount: Int = 0,
+        val isSingleUser: Boolean = false
     )
 
     var data: UsersTypingData = UsersTypingData()
@@ -70,32 +71,61 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
     }
 
     private fun onDataSetChanged() {
-        if (data.showUsers) {
-            val userNameList = data.typingUsers
-                .filter { it.lastOrFirst.isNotBlank() }
-                .take(MAX_TYPING_USERS)
+        when {
+            // Нет печатающих -> скрываем View
+            data.typingCount <= 0 -> {
+                visibility = View.GONE
+            }
 
-            if (userNameList.isNotEmpty()) {
+            // Единственный участник диалога -> показываем только "печатает"
+            data.isSingleUser -> {
+                visibility = View.VISIBLE
+
+                usersLayout.configure { isVisible = false }
+                val isChanged = typingLayout.configure { text = oneTypingText }
+
+                if (isChanged) safeRequestLayout()
+            }
+
+            // Количество печатающих не больше допустимого количества -> показываем фамилии через запятую и печатают
+            data.typingCount <= MAX_TYPING_USERS -> {
+                val userNameList = data.typingUsers
+                    .filter { it.lastOrFirst.isNotBlank() }
+                    .take(MAX_TYPING_USERS)
+
+                if (userNameList.isNotEmpty()) {
+                    visibility = View.VISIBLE
+
+                    usersLayout.configure {
+                        text = makeUsersTypingText(userNameList)
+                        needHighWidthAccuracy = userNameList.size > 1
+                        isVisible = true
+                    }
+                    typingLayout.configure {
+                        text = SPACE + if (userNameList.size == 1) oneTypingText else fewPrintingText
+                    }
+
+                    safeRequestLayout()
+                } else {
+                    visibility = View.GONE
+                }
+            }
+
+            // В остальных случаях показываем "N участников печатает"
+            else -> {
+                visibility = View.VISIBLE
+
                 typingLayout.configure {
-                    text = SPACE + if (userNameList.size > 1) fewPrintingText else oneTypingText
+                    text = SPACE + resources.getQuantityString(R.plurals.typing, data.typingCount)
                 }
                 usersLayout.configure {
-                    text = makeUsersTypingText(userNameList)
-                    needHighWidthAccuracy = userNameList.size > 1
+                    text = resources.getQuantityString(R.plurals.participants_count, data.typingCount, data.typingCount)
+                    needHighWidthAccuracy = false
                     isVisible = true
                 }
 
                 safeRequestLayout()
-                visibility = View.VISIBLE
-            } else {
-                visibility = View.GONE
             }
-        } else {
-            visibility = View.VISIBLE
-            usersLayout.configure { isVisible = false }
-            val isChanged = typingLayout.configure { text = oneTypingText }
-
-            if (isChanged) safeRequestLayout()
         }
     }
 
@@ -165,7 +195,7 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
 
 private const val ACTIVE_POINTS_SIZE_PERCENT = 0.15
 private const val DEFAULT_TEXT_SIZE_SP = 14
-private const val MAX_TYPING_USERS = 10
+private const val MAX_TYPING_USERS = 2
 
 data class MockUserName(val lastName: String, val firstName: String) {
     val renderName: String by lazy {
