@@ -17,14 +17,30 @@ import com.chekurda.game_2048.screens.game.presentation.views.experimental.Typin
 import org.apache.commons.lang3.StringUtils.EMPTY
 import org.apache.commons.lang3.StringUtils.SPACE
 
-class UsersTypingView(context: Context) : ViewGroup(context) {
+/**
+ * View для отображения печатающих пользователей: "участник/и печатают...".
+ * @see UsersTypingData
+ *
+ * @author vv.chekurda
+ */
+internal class UsersTypingView(context: Context) : ViewGroup(context) {
 
+    /**
+     * Данные о печатающих пользователях.
+     *
+     * @property typingUsers список имен печатающих пользователей.
+     * @property typingCount общее количество всех печатающих пользователей.
+     * @property isSingleUser true, если только один пользователь может печатать.
+     */
     class UsersTypingData(
-        val typingUsers: List<MockUserName> = emptyList(),
+        val typingUsers: List<UserName> = emptyList(),
         val typingCount: Int = 0,
         val isSingleUser: Boolean = false
     )
 
+    /**
+     * Установить/получить данные о печатающих пользователях.
+     */
     var data: UsersTypingData = UsersTypingData()
         set(value) {
             val isChanged = data != value
@@ -32,7 +48,11 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
             if (isChanged) onDataSetChanged()
         }
 
-    @Px var textSize: Float = sp(DEFAULT_TEXT_SIZE_SP).toFloat()
+    /**
+     * Установить/получить размер текста.
+     */
+    @Px
+    var textSize: Float = sp(DEFAULT_TEXT_SIZE_SP).toFloat()
         set(value) {
             val usersChanged = usersLayout.configure { textSize = value }
             val typingChanged = typingLayout.configure { textSize = value }
@@ -42,7 +62,11 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
             if (usersChanged || typingChanged) safeRequestLayout()
         }
 
-    @ColorInt var textColor: Int = Color.GRAY
+    /**
+     * Установить/получить цвет текста.
+     */
+    @ColorInt
+    var textColor: Int = Color.GRAY
         set(value) {
             field = value
             usersLayout.textPaint.color = value
@@ -51,16 +75,25 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
     private val oneTypingText = resources.getString(R.string.one_typing)
     private val fewPrintingText = resources.getString(R.string.few_typing)
 
+    /**
+     * Разметка для отображения пользователей.
+     */
     private val usersLayout = TextLayout {
         paint.textSize = textSize
         paint.color = textColor
     }
 
+    /**
+     * Разметка для отображения "печатает(ют)".
+     */
     private val typingLayout = TextLayout {
         paint.textSize = textSize
         paint.color = textColor
     }
 
+    /**
+     * Анимируемые точки.
+     */
     private val typingDotsView = TypingDotsView(context).apply {
         params = DotsParams(size = (textSize * ACTIVE_POINTS_SIZE_PERCENT).toInt())
     }
@@ -70,6 +103,9 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
         addView(typingDotsView)
     }
 
+    /**
+     * Произошло изменение данных для отображения печатающих пользователей.
+     */
     private fun onDataSetChanged() {
         when {
             // Нет печатающих -> скрываем View
@@ -88,10 +124,10 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
             }
 
             // Количество печатающих не больше допустимого количества -> показываем фамилии через запятую и печатают
-            data.typingCount <= MAX_TYPING_USERS -> {
+            data.typingCount <= MAX_TYPING_USERS_NAMES -> {
                 val userNameList = data.typingUsers
                     .filter { it.lastOrFirst.isNotBlank() }
-                    .take(MAX_TYPING_USERS)
+                    .take(MAX_TYPING_USERS_NAMES)
 
                 if (userNameList.isNotEmpty()) {
                     visibility = View.VISIBLE
@@ -116,10 +152,17 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
                 visibility = View.VISIBLE
 
                 typingLayout.configure {
-                    text = SPACE + resources.getQuantityString(R.plurals.typing, data.typingCount)
+                    text = SPACE + resources.getQuantityString(
+                        R.plurals.typing,
+                        data.typingCount
+                    )
                 }
                 usersLayout.configure {
-                    text = resources.getQuantityString(R.plurals.participants_count, data.typingCount, data.typingCount)
+                    text = resources.getQuantityString(
+                        R.plurals.participants_count,
+                        data.typingCount,
+                        data.typingCount
+                    )
                     needHighWidthAccuracy = false
                     isVisible = true
                 }
@@ -129,7 +172,10 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
         }
     }
 
-    private fun makeUsersTypingText(users: List<MockUserName>): String =
+    /**
+     * Создать строковый литерал печатающих пользователей по списку [users].
+     */
+    private fun makeUsersTypingText(users: List<UserName>): String =
         when (users.size) {
             0 -> EMPTY
             1 -> users.first().renderName
@@ -149,7 +195,7 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
         when (MeasureSpec.getMode(measureSpec)) {
             MeasureSpec.EXACTLY -> MeasureSpec.getSize(measureSpec)
             MeasureSpec.AT_MOST -> minOf(getMinSize(), MeasureSpec.getSize(measureSpec))
-            else -> getMinSize()
+            else                -> getMinSize()
         }
 
     override fun getSuggestedMinimumWidth(): Int {
@@ -159,7 +205,7 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
             typingLayout.getDesiredWidth(typingLayout.text),
             typingDotsView.measuredWidth,
             paddingEnd
-        ).sumBy { it }
+        ).sumOf { it }
         return maxOf(super.getSuggestedMinimumWidth(), minContentWidth)
     }
 
@@ -193,11 +239,23 @@ class UsersTypingView(context: Context) : ViewGroup(context) {
     override fun hasOverlappingRendering(): Boolean = false
 }
 
+/**
+ * Процент размера анимируемых точек относительно размера текста.
+ */
 private const val ACTIVE_POINTS_SIZE_PERCENT = 0.15
-private const val DEFAULT_TEXT_SIZE_SP = 14
-private const val MAX_TYPING_USERS = 2
 
-data class MockUserName(val lastName: String, val firstName: String) {
+/**
+ * Стандартный размер текста в sp.
+ */
+private const val DEFAULT_TEXT_SIZE_SP = 14
+
+/**
+ * Максимальное количество имён печатающих пользователей.
+ */
+private const val MAX_TYPING_USERS_NAMES = 2
+
+internal data class UserName(val lastName: String, val firstName: String) {
+
     val renderName: String by lazy {
         val isEmptyLast = lastName.isBlank()
         val isEmptyFirst = firstName.isBlank()

@@ -17,7 +17,7 @@ import com.chekurda.design.custom_view_tools.utils.safeRequestLayout
  *
  * @author vv.chekurda
  */
-class TypingDotsView(context: Context) : View(context) {
+internal class TypingDotsView(context: Context) : View(context) {
 
     constructor(context: Context, attrs: AttributeSet? = null) : this(context)
 
