@@ -27,7 +27,7 @@ internal class ClockDrawable(context: Context) : Drawable() {
     private var startTime = System.currentTimeMillis()
 
     /**
-     * Установить/получить размер [Drawable] в px.
+     * Установить/получить размер часов в px.
      */
     @get:Px
     var size: Int
