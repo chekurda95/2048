@@ -86,6 +86,8 @@ internal class ClockDrawable(context: Context) : Drawable() {
     }
 
     override fun draw(canvas: Canvas) {
+        if (!isVisible) return
+
         val (centerX, centerY) = bounds.centerX().toFloat() to bounds.centerY().toFloat()
         val diameter = size
         val currentTime = System.currentTimeMillis()
@@ -107,15 +109,15 @@ internal class ClockDrawable(context: Context) : Drawable() {
                 rotateTime = hourDurationTimeMs,
                 startX = centerX,
                 startY = centerY,
-                endX = centerY + diameter * HOUR_ARROW_WIDTH_RATIO
+                endX = centerX + diameter * HOUR_ARROW_WIDTH_RATIO
             )
         }
     }
 
-    override fun getIntrinsicHeight(): Int =
+    override fun getIntrinsicWidth(): Int =
         bounds.width()
 
-    override fun getIntrinsicWidth(): Int =
+    override fun getIntrinsicHeight(): Int =
         bounds.height()
 
     override fun setColorFilter(colorFilter: ColorFilter?) {}
