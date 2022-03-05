@@ -3,6 +3,7 @@ package com.chekurda.game_2048.screens.game.presentation.views.experimental
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
 import androidx.annotation.Px
@@ -12,9 +13,19 @@ import com.chekurda.design.custom_view_tools.utils.dp
 /**
  * Drawable часов с анимацией стрелок.
  *
+ * Для анимированной отрисовки часов необходимо использовать ее в качестве фона [View.setBackground] или [View.setForeground].
+ * Для кастомных [View] есть альтернативное решение - необходимо установить в [ClockDrawable] колбэк [Drawable.setCallback]
+ * и переопределить метод [View.verifyDrawable] у вашей кастомной [View],
+ * чтобы подтвердить причастность данной [ClockDrawable] ко [View],
+ * в этом случае область с часами будет перерисовываться самостоятельно во время анимации.
+ *
  * @author vv.chekurda
  */
 internal class ClockDrawable(context: Context) : Drawable() {
+
+    private companion object {
+        private var startTime = System.currentTimeMillis()
+    }
 
     private val paint = Paint().apply {
         isAntiAlias = true
@@ -24,7 +35,8 @@ internal class ClockDrawable(context: Context) : Drawable() {
 
     private var hourDurationTimeMs: Int = DEFAULT_HOUR_ROTATION_TIME_MS
     private var minuteDurationTimeMs: Int = (DEFAULT_HOUR_ROTATION_TIME_MS * DEFAULT_MINUTE_ROTATION_RATIO).toInt()
-    private var startTime = System.currentTimeMillis()
+    private val circleDiameter: Int
+        get() = (size - paint.strokeWidth).toInt()
 
     /**
      * Установить/получить размер часов в px.
@@ -53,6 +65,12 @@ internal class ClockDrawable(context: Context) : Drawable() {
             paint.color = value
         }
 
+    /**
+     * Базовая линия на которой размещаетя окружность часов.
+     */
+    val baseline: Int
+        get() = (bounds.centerY() - bounds.top + circleDiameter / 2f + paint.strokeWidth / 2f).toInt()
+
     init {
         size = context.dp(DEFAULT_SIZE_DP)
     }
@@ -75,11 +93,6 @@ internal class ClockDrawable(context: Context) : Drawable() {
         if (alpha == paint.alpha) return
         paint.alpha = alpha
     }
-
-    override fun setVisible(visible: Boolean, restart: Boolean): Boolean =
-        super.setVisible(visible, restart).also {
-            if (restart) startTime = System.currentTimeMillis()
-        }
 
     override fun onBoundsChange(bounds: Rect?) {
         paint.strokeWidth = size * STROKE_WIDTH_RATIO
@@ -112,13 +125,12 @@ internal class ClockDrawable(context: Context) : Drawable() {
                 endX = centerX + diameter * HOUR_ARROW_WIDTH_RATIO
             )
         }
+        invalidateSelf()
     }
 
-    override fun getIntrinsicWidth(): Int =
-        bounds.width()
+    override fun getIntrinsicWidth(): Int = size
 
-    override fun getIntrinsicHeight(): Int =
-        bounds.height()
+    override fun getIntrinsicHeight(): Int = size
 
     override fun setColorFilter(colorFilter: ColorFilter?) {}
 
